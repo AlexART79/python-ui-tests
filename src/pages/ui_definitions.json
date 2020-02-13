@@ -1,0 +1,43 @@
+{
+  "ui_definitions": [
+    {
+      "key": "common_locators",
+      "locators": [
+        {
+          "name": "sidebar_locator",
+          "value": ["class name", "layout-sidebar"]
+        },
+        {
+          "name": "side_menu_item_locator",
+          "value": ["xpath", "//ul[@class='layout-submenu']/li[@role='presentation']/a"]
+        }
+      ]
+    },
+    {
+      "key": "checkbox_page_locators",
+      "locators": [
+        {
+          "name": "first_checkbox_locator",
+          "value": ["xpath", "//h3[@class='first']/following-sibling::div/div[contains(@class, 'p-checkbox') and @role='checkbox']"]
+        },
+        {
+          "name": "second_checkbox_locator",
+          "value": ["xpath", "(//div[contains(@class, 'p-checkbox') and @role='checkbox'])[2]"]
+        }
+      ]
+    },
+    {
+      "key": "autocomplete_page_locators",
+      "locators": [
+        {
+          "name": "basic_autocomplete",
+          "value": ["xpath", "(//span[contains(@class, 'p-autocomplete')])[1]"]
+        },
+        {
+          "name": "advanced_autocomplete",
+          "value": ["xpath", "(//span[contains(@class, 'p-autocomplete')])[2]"]
+        }
+      ]
+    }
+  ]
+}

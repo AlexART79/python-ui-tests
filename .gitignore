@@ -1,0 +1,15 @@
+# ignore temporary folder (with generated allure results)
+**/tmp
+
+# ignore python and putest cache
+**/__pycache__
+**/.pytest_cache
+
+# ignore Idea files
+**/.idea
+
+# ignore venv
+**/venv
+
+# ignore logs
+*.log
