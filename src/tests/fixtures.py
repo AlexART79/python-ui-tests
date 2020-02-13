@@ -6,9 +6,9 @@ from ..pages.demos_page import DemosPage
 
 
 @pytest.fixture(scope="function")
-def start_page(driver):
+def start_page(driver, base_url):
     _page = DemosPage(driver)
-    _page.goto()
+    _page.goto(base_url)
 
     yield _page
 

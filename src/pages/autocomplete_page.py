@@ -1,4 +1,4 @@
-from ..pages.locators import AutoCompletePageLocators
+from .locators import AutoCompletePageLocators
 from ..Elements.react_components import ReactAutoComplete
 from .demo_base_page import DemoBasePage
 

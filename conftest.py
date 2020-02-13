@@ -1,13 +1,13 @@
-import inspect
 import pytest
 
 from src.DriverManager import DriverManager, BrowserOptions
 
 
 #
-# Register cmd-line options
+# Register cmd-line options and ini file options
 #
 def pytest_addoption(parser):
+    # cmd-line options
     parser.addoption("-B", "--browser",
                      dest="browser",
                      action="append",
@@ -24,6 +24,10 @@ def pytest_addoption(parser):
                      default="1600x800",
                      help="Run in headless mode (FF, Chrome). Values: yes|no")
 
+    # ini options
+    parser.addini('base_url', 'base AUT url')
+    parser.addini('default_wait_timeout', 'default timeout value for implicitly wait')
+
 #
 # configure webdriver based on cmd-line arguments
 #
@@ -35,10 +39,13 @@ def pytest_configure(config):
     # browsers to run tests in
     browsers_list = get_browser_option(config)
 
+    # default timeout for implicitly wait from pytest.ini
+    timeout = config.getini("default_wait_timeout")
+
     browser_opt = BrowserOptions(hdls, win_size)
 
     # create plugin class
-    class Plugin:
+    class DriverPlugin:
         #
         # web driver fixture
         #
@@ -48,7 +55,7 @@ def pytest_configure(config):
             browser_type = request.param
 
             d = DriverManager.get_driver(browser_type)(browser_opt)
-            d.implicitly_wait(5)
+            d.implicitly_wait(timeout)
 
             # return prepared webdriver
             yield d
@@ -61,9 +68,8 @@ def pytest_configure(config):
                     d.quit()
                     del d
 
-
     # register plugin
-    config.pluginmanager.register(Plugin())
+    config.pluginmanager.register(DriverPlugin())
 
 
 # get -B (--browser) cmd-line option and return it as browsers list
@@ -91,3 +97,12 @@ def get_window_size_option(conf):
 def size(wsize):
     sz = wsize.split('x')
     return int(sz[0]), int(sz[1])
+
+
+# common fixtures
+
+# base URL from pytest.ini file
+@pytest.fixture(scope="function")
+def base_url(request):
+    url = request.config.getini("base_url")
+    return url

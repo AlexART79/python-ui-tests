@@ -1,6 +1,6 @@
 from selenium.webdriver.common.by import By
 
-from .locators import CommonLocators
+from .locators import CommonLocators, get_def
 from .base_page import BasePage
 from ..Elements.page_elements import Element
 
@@ -12,7 +12,7 @@ class SideMenu(Element):
     @property
     def items(self):
         dct = {}
-        li = self.find_elements(CommonLocators.side_menu_item_locator)
+        li = self.find_elements(get_def("common_locators/side_menu_item_locator"))
         for item in li:
             key = item.text
             dct[key] = item
@@ -33,10 +33,9 @@ class DemoBasePage(BasePage):
     def __init__(self, drv):
         super().__init__(drv)
 
-    def goto(self):
-        url = "https://www.primefaces.org/primereact/#/"
+    def goto(self, url):
         self.go_to(url)
 
     @property
     def sidebar(self):
-        return SideMenu(self.driver, CommonLocators.sidebar_locator)
+        return SideMenu(self.driver, get_def("common_locators/sidebar_locator"))
