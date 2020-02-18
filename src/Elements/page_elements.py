@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 
-from ..utils.helpers import wait_for
+from ..utils.helpers import Helpers
 
 
 class Element(object):
@@ -22,13 +22,26 @@ class Element(object):
     def text(self):
         return self.find().text
 
+    @property
     def is_displayed(self):
         try:
             def func():
                 e = self.find(1)
                 return e.is_displayed()
 
-            return wait_for(func, 30, 3)
+            return Helpers.wait_for(func, 30, 3)
+
+        except TimeoutException:
+            return False
+
+    @property
+    def is_enabled(self):
+        try:
+            def func():
+                e = self.find(1)
+                return e.is_enabled()
+
+            return Helpers.wait_for(func, 30, 3)
 
         except TimeoutException:
             return False
@@ -42,32 +55,36 @@ class Element(object):
         sleep(1)
 
     def find_element(self, locator):
+        """
+        Triyng to fing a sub-element inside the current element
+        :param locator: locator of sub-element (relative to current element)
+        :return: IWebElement or None in case element not found
+        """
         e = self.find()
 
         def func():
-            found_elements = None
+            found_element = None
             try:
-                found_elements = e.find_element(*locator)
+                found_element = e.find_element(*locator)
             except:
                 pass
 
-            if found_elements is not None:
+            if found_element is not None:
                 return True
 
             return False
 
-        if wait_for(func, 60, 5):
+        if Helpers.wait_for(func, 60, 5):
             return e.find_element(*locator)
 
         return None
 
     def find_elements(self, locator):
-        if self.find() is not None:
-            return WebDriverWait(self.driver, 15).until(EC.presence_of_all_elements_located(locator))
-
-        return None
-
-    def find_all(self, locator):
+        """
+        Triyng to fing a sub-elements inside the current element
+        :param locator: locator of sub-elements (relative to current element)
+        :return: IWebElements collection or None in case element not found
+        """
         e = self.find()
 
         def func():
@@ -82,11 +99,10 @@ class Element(object):
 
             return False
 
-        if wait_for(func, 60, 5):
-            return e.find_element(*locator)
+        if Helpers.wait_for(func, 60, 5):
+            return e.find_elements(*locator)
 
-
-        return self.find().find_elements(*locator)
+        return None
 
     def get_attribute(self, name):
         return self.find().get_attribute(name)

@@ -1,4 +1,4 @@
-from .locators import AutoCompletePageLocators
+from .locators import ui_definitions
 from ..Elements.react_components import ReactAutoComplete
 from .demo_base_page import DemoBasePage
 
@@ -9,8 +9,8 @@ class AutoCompletePage(DemoBasePage):
 
     @property
     def basic_autocomplete(self):
-        return ReactAutoComplete(self.driver, AutoCompletePageLocators.basic_autocomplete)
+        return ReactAutoComplete(self.driver, ui_definitions.get("autocomplete_page_locators/basic_autocomplete"))
 
     @property
     def advanced_autocomplete(self):
-        return ReactAutoComplete(self.driver, AutoCompletePageLocators.advanced_autocomplete)
+        return ReactAutoComplete(self.driver, ui_definitions.get("autocomplete_page_locators/advanced_autocomplete"))

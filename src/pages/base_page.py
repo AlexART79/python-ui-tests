@@ -3,7 +3,7 @@ class BasePage(object):
         object.__init__(self)
         self.driver = drv
 
-    def go_to(self, url):
+    def goto(self, url):
         self.driver.get(url)
 
     def back(self):
@@ -18,4 +18,3 @@ class BasePage(object):
     @property
     def title(self):
         return self.driver.title
-

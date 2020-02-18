@@ -1,6 +1,11 @@
 import allure
 from allure_commons._allure import StepContext
 
+from src.utils.helpers import Helpers
+
+
+def pytest_bdd_before_scenario(request, feature, scenario):
+    Helpers.print("pytest_bdd_before_scenario hook started")
 
 # step error hook (attach screenshot on failure)
 def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func_args, exception):

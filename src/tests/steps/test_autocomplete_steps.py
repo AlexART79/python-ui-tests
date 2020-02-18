@@ -1,14 +1,16 @@
 import allure
 from flaky import flaky
 from pytest_bdd import parsers, scenario, given, when, then
-from src.tests.steps.conftest import step
-from src.utils.helpers import wait_for
-from src.tests.fixtures import autocomplete_page, start_page
+
+from src.utils.helpers import Helpers
+from .conftest import step
+from ..fixtures import autocomplete_page, start_page
 
 
 # scenarios definition
 
 @flaky(max_runs=5)
+@allure.epic("React controls")
 @allure.feature("Autocomplete")
 @allure.story("Basic autocomplete select")
 @scenario('autocomplete.feature', 'Basic autocomplete select')
@@ -16,6 +18,7 @@ def test_autocomplete_basic():
     pass
 
 
+@allure.epic("React controls")
 @allure.feature("Autocomplete")
 @allure.story("Advanced autocomplete select")
 @scenario('autocomplete.feature', 'Advanced autocomplete select')
@@ -71,11 +74,11 @@ def i_click_dropdown_button_in_advanced_autocomplete_control(advanced_autocomple
 @step
 def autocomplete_control_should_became_expanded(autocomplete_control, driver):
     allure.attach(driver.get_screenshot_as_png(), name='screenshot', attachment_type=allure.attachment_type.PNG)
-    assert wait_for(lambda: autocomplete_control.is_expanded, 10, 2)
+    assert Helpers.wait_for(lambda: autocomplete_control.is_expanded, 10, 2)
 
 
 @then('Autocomplete should became collapsed')
 @step
 def autocomplete_control_should_became_collapsed(autocomplete_control, driver):
     allure.attach(driver.get_screenshot_as_png(), name='screenshot', attachment_type=allure.attachment_type.PNG)
-    assert wait_for(lambda: not autocomplete_control.is_expanded, 10, 2)
+    assert Helpers.wait_for(lambda: not autocomplete_control.is_expanded, 10, 2)

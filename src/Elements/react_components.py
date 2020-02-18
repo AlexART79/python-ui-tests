@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
-from src.utils.helpers import wait_for
+from src.utils.helpers import Helpers
 from .page_elements import Element
 
 
@@ -99,7 +99,7 @@ class ReactAutoComplete(Element):
                 item = None
                 return False, None
 
-        wait_for(lambda : find_item()[0], 10, 1000)
+        Helpers.wait_for(lambda : find_item()[0], 10, 1000)
         res, item = find_item()
 
 

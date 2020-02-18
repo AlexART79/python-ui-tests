@@ -22,10 +22,11 @@ class DriverManager:
         sys.path.insert(0, os.path.join(dir_path, 'webdriver'))
 
         chrome_options = Options()
+
         if browser_opt.winsize is not None:
             chrome_options.add_argument("window-size={},{}".format(browser_opt.winsize[0], browser_opt.winsize[1]))
         else:
-            chrome_options.add_argument("window-size=1600,800")
+            chrome_options.add_argument("--start-maximized")
 
         if browser_opt.headless:
             chrome_options.add_argument("--headless")
@@ -47,7 +48,7 @@ class DriverManager:
         if browser_opt.winsize is not None:
             drv.set_window_size(browser_opt.winsize[0], browser_opt.winsize[1])
         else:
-            drv.set_window_size(1600, 800)
+            drv.maximize_window()
 
         return drv
 
@@ -62,7 +63,7 @@ class DriverManager:
         if browser_opt.winsize is not None:
             drv.set_window_size(browser_opt.winsize[0], browser_opt.winsize[1])
         else:
-            drv.set_window_size(1600, 800)
+            drv.maximize_window()
 
         return drv
 

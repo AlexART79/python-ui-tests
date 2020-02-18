@@ -8,10 +8,24 @@
           "value": ["class name", "layout-sidebar"]
         },
         {
+          "name": "search",
+          "value": ["xpath", ".//input"]
+        },
+        {
           "name": "side_menu_item_locator",
-          "value": ["xpath", "//ul[@class='layout-submenu']/li[@role='presentation']/a"]
+          "value": ["xpath", "./descendant-or-self::ul[@class='layout-submenu']/li[@role='presentation']/a"]
         }
       ]
+    },
+    {
+      "key": "demos_page",
+      "locators": [
+        {
+          "name": "introduction",
+          "value": ["xpath", "//*[contains(@class, 'introduction')]//h1"]
+        }
+      ]
+
     },
     {
       "key": "checkbox_page_locators",
