@@ -3,10 +3,15 @@ Feature: Checkbox tests
     React checkbox component tests
 
 
+Background:
+    Given I have Checkbox demo page
+
+
 @basic
 Scenario: Basic checkbox toggle
     Given I have basic checkbox control
     Then Checkbox checked state should be 'Off'
+
     When I toggle checkbox state
     Then Checkbox checked state should be 'On'
 

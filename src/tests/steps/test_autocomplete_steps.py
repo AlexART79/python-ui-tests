@@ -4,7 +4,6 @@ from pytest_bdd import parsers, scenario, given, when, then
 
 from src.utils.helpers import Helpers
 from .conftest import step
-from ..fixtures import autocomplete_page, start_page
 
 
 # scenarios definition
@@ -13,7 +12,7 @@ from ..fixtures import autocomplete_page, start_page
 @allure.epic("React controls")
 @allure.feature("Autocomplete")
 @allure.story("Basic autocomplete select")
-@scenario('autocomplete.feature', 'Basic autocomplete select')
+@scenario('ReactControls/autocomplete.feature', 'Basic autocomplete select')
 def test_autocomplete_basic():
     pass
 
@@ -21,7 +20,7 @@ def test_autocomplete_basic():
 @allure.epic("React controls")
 @allure.feature("Autocomplete")
 @allure.story("Advanced autocomplete select")
-@scenario('autocomplete.feature', 'Advanced autocomplete select')
+@scenario('ReactControls/autocomplete.feature', 'Advanced autocomplete select')
 def test_autocomplete_advanced():
     pass
 
@@ -30,8 +29,8 @@ def test_autocomplete_advanced():
 
 @given('I have basic autocomplete control', target_fixture='autocomplete_control')
 @step
-def basic_autocomplete_control(autocomplete_page):
-    return autocomplete_page.basic_autocomplete
+def basic_autocomplete_control(autocomplete_demo_page):
+    return autocomplete_demo_page.basic_autocomplete
 
 
 @when('I start typing <text> in basic autocomplete control')
@@ -60,8 +59,8 @@ def autocomplete_control_value_should_be(autocomplete_control, value, driver):
 
 @given('I have advanced autocomplete control', target_fixture='autocomplete_control')
 @step
-def advanced_autocomplete_control(autocomplete_page):
-    return autocomplete_page.advanced_autocomplete
+def advanced_autocomplete_control(autocomplete_demo_page):
+    return autocomplete_demo_page.advanced_autocomplete
 
 
 @when('I click dropdown button in advanced autocomplete control')

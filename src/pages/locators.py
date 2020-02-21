@@ -1,7 +1,9 @@
 import json
 from collections import namedtuple
+from src.utils.test_logger import TestLog
 
-from src.utils.helpers import Helpers
+
+log = TestLog()
 
 
 class UiDefinitions:
@@ -10,7 +12,7 @@ class UiDefinitions:
 
     # Load UI definitions from a JSON file
     def load_ui_definitions(self, file_name):
-        Helpers.print("Loading UI definitions from {}".format(file_name))
+        log.debug("Loading UI definitions from {}".format(file_name))
 
         def _json_object_hook(d): return namedtuple('X', d.keys())(*d.values())
 
@@ -23,7 +25,7 @@ class UiDefinitions:
 
     # Get UI definition by it's 'path' - "section_name/locator_name"
     def get(self, path):
-        Helpers.print("Get UI control locator: {}".format(path))
+        log.debug("Get UI control locator: {}".format(path))
 
         # split path
         section_name, locator_name = path.split('/')
@@ -45,4 +47,3 @@ class UiDefinitions:
 
 
 ui_definitions = UiDefinitions("src/pages/ui_definitions.json")
-

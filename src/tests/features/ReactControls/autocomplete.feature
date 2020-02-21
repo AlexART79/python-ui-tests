@@ -3,6 +3,10 @@ Feature: Autocomplete tests
     React autocomplete component tests
 
 
+Background:
+    Given I have Autocomplete demo page
+
+
 @advanced
 Scenario: Advanced autocomplete select
     Given I have advanced autocomplete control

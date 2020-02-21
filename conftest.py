@@ -1,17 +1,24 @@
+import os
+
 import pytest
 from src.DriverManager import DriverManager, BrowserOptions
 from src.utils.helpers import Helpers
+from src.utils.test_logger import TestLog, Level
+
+
+log = TestLog()
 
 
 @pytest.hookimpl()
 def pytest_sessionstart(session):
-    Helpers.print("pytest_sessionstart")
+    log.debug("pytest_sessionstart")
+
 
 #
 # Register cmd-line options and ini file options
 #
 def pytest_addoption(parser):
-    Helpers.print("pytest_addoption")
+    log.debug("pytest_addoption")
 
     # cmd-line options
     parser.addoption("-B", "--browser",
@@ -31,6 +38,7 @@ def pytest_addoption(parser):
                      help="Run in headless mode (FF, Chrome). Values: yes|no")
 
     # ini options
+    parser.addini('tests_log_level', 'Log level', default="INFO")
     parser.addini('base_url', 'base AUT url')
     parser.addini('default_wait_timeout', 'default timeout value for implicitly wait', default=5)
 
@@ -39,7 +47,10 @@ def pytest_addoption(parser):
 # configure webdriver based on cmd-line arguments
 #
 def pytest_configure(config):
-    Helpers.print("pytest_configure")
+    os.environ["LOG_LEVEL"] = config.getini("tests_log_level")
+    TestLog.configure()
+
+    log.debug("pytest_configure")
 
     # headless/normal mode
     hdls = config.getoption("headless")
@@ -63,7 +74,7 @@ def pytest_configure(config):
             # prepare webdriver
             browser_type = request.param
 
-            Helpers.print("Create 'driver' fixture for {}".format(browser_type))
+            log.debug("Create 'driver' fixture for {}".format(browser_type))
 
             d = DriverManager.get_driver(browser_type)(browser_opt)
             d.implicitly_wait(timeout)
@@ -79,18 +90,20 @@ def pytest_configure(config):
                     d.quit()
                     del d
 
-            Helpers.print("'driver' fixture finalized")
+            log.debug("'driver' fixture finalized")
 
     # register plugin
     config.pluginmanager.register(DriverPlugin())
+
 
 #
 # common fixtures
 #
 
+
 # base URL from pytest.ini file
 @pytest.fixture(scope="function")
 def base_url(request):
-    Helpers.print("Getting base_url from config (fixture)")
+    log.debug("Getting base_url from config (fixture)")
     url = request.config.getini("base_url")
     return url

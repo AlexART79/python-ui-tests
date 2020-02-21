@@ -1,20 +1,20 @@
-from time import sleep
-
 from selenium.webdriver.common.by import By
-
-from src.utils.helpers import Helpers, cached
+from src.utils.test_logger import TestLog
 from .locators import ui_definitions
 from .base_page import BasePage
 from ..Elements.page_elements import Element, InputElement
 
 
+log = TestLog()
+
+
 class SideMenu(Element):
+
     def __init__(self, driver, locator):
         super().__init__(driver, locator)
-        Helpers.print("Created SideMenu class instance")
+        log.debug("Created SideMenu class instance")
 
     @property
-    @cached(age=5)
     def items(self):
         dct = {}
         li = self.find_elements(ui_definitions.get("common_locators/side_menu_item_locator"))
@@ -24,7 +24,7 @@ class SideMenu(Element):
 
         return dct
 
-    def get_item(self, item_name):
+    def get_item(self, item_name: str) -> Element:
         locator = (By.XPATH, "//a[text() = '{}']".format(item_name))
         item = Element(self.driver, locator)
         return item.find(15)
@@ -40,11 +40,12 @@ class SideMenu(Element):
     def search(self, text):
         self.search_box.value = text
 
+
 class DemoBasePage(BasePage):
     # constructor
     def __init__(self, drv):
         super().__init__(drv)
-        Helpers.print("Created DemoBasePage class instance")
+        log.debug("Created DemoBasePage class instance")
 
     @property
     def page_header(self):
