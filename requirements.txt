@@ -19,6 +19,7 @@ packaging==20.1
 parse==1.14.0
 parse-type==0.5.2
 pluggy==0.13.1
+psutil==5.7.0
 py==1.8.1
 pyparsing==2.4.6
 pytest==5.3.5
@@ -32,3 +33,4 @@ six==1.14.0
 tblib==1.6.0
 urllib3==1.25.8
 wcwidth==0.1.8
+webdriver-manager==2.3.0

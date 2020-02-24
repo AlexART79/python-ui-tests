@@ -1,4 +1,5 @@
 import os
+from time import sleep
 
 import pytest
 from src.DriverManager import DriverManager, BrowserOptions
@@ -7,11 +8,6 @@ from src.utils.test_logger import TestLog, Level
 
 
 log = TestLog()
-
-
-@pytest.hookimpl()
-def pytest_sessionstart(session):
-    log.debug("pytest_sessionstart")
 
 
 #
@@ -76,7 +72,9 @@ def pytest_configure(config):
 
             log.debug("Create 'driver' fixture for {}".format(browser_type))
 
-            d = DriverManager.get_driver(browser_type)(browser_opt)
+            manager = DriverManager(browser_type, browser_opt)
+
+            d = manager.get_driver()
             d.implicitly_wait(timeout)
 
             # return prepared webdriver
@@ -88,7 +86,8 @@ def pytest_configure(config):
             except:
                 if d is not None:
                     d.quit()
-                    del d
+
+            del d
 
             log.debug("'driver' fixture finalized")
 
