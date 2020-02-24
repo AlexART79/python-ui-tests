@@ -51,7 +51,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            pytest -B all --alluredir=tmp/allure_results --window-size 1900x1000 -n 3 src/tests/pure_pytest
+            pytest -B chrome -B firefox --alluredir=tmp/allure_results --window-size 1900x1000 -n 3 src/tests/pure_pytest
           
       - run:
           name: generate report
