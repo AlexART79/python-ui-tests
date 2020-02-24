@@ -5,9 +5,9 @@ import pytest
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 
-from src.DriverManager import DriverManager, BrowserOptions
-from src.utils.helpers import Helpers
-from src.utils.test_logger import TestLog, Level
+from .src.DriverManager import DriverManager, BrowserOptions
+from .src.utils.helpers import Helpers
+from .src.utils.test_logger import TestLog, Level
 
 
 log = TestLog()
