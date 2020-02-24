@@ -1,0 +1,71 @@
+# Python CircleCI 2.0 configuration file
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
+      - image: circleci/python:3.8.1-browsers
+      
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
+    working_directory: ~/repo/
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "requirements.txt" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: download allure
+          command: |
+            curl -LO https://github.com/allure-framework/allure2/releases/download/2.13.1/allure-commandline-2.13.1.zip
+            unzip allure-commandline-2.13.1.zip
+          
+      # run tests
+      # this example uses Django's built-in test-runner
+      # other common Python testing frameworks include pytest and nose
+      # https://pytest.org
+      # https://nose.readthedocs.io
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            pytest -B all --alluredir=tmp/allure_results --window-size 1900x1000 -n 3 src/tests/pure_pytest
+          
+      - run:
+          name: generate report
+          command: |
+            ./allure-2.13.1/bin/allure generate tmp/allure_results -o tmp/allure_report
+          when: always
+      
+      - run:
+          name: archive results
+          command: |
+            mkdir artifacts            
+            zip -r artifacts/test_report.zip test_report            
+          
+      - store_artifacts:
+          path: artifacts
+
+          
