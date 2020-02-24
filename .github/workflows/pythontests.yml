@@ -20,7 +20,7 @@ jobs:
     - name: Download allure
       run: |
         curl -LO https://github.com/allure-framework/allure2/releases/download/2.13.1/allure-commandline-2.13.1.zip
-        unzip allure
+        unzip allure-commandline-2.13.1.zip
     - name: Lint with flake8
       run: |
         pip install flake8
@@ -34,5 +34,5 @@ jobs:
         pytest -B all --alluredir=tmp/allure_results --window-size 1900x1000 -n 3 src/tests/pure_pytest
     - name: Generate allure report
       run: |
-        ./allure/allure-2.13.1/bin/allure generate tmp/allure_results -o tmp/allure_report
+        ./allure-2.13.1/bin/allure generate tmp/allure_results -o tmp/allure_report
               
