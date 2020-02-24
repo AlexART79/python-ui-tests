@@ -16,7 +16,10 @@ class Element(object):
         self.locator = locator
 
     def find(self, timeout=30):
-        return WebDriverWait(self.driver, timeout).until(EC.presence_of_element_located(self.locator))
+        _element = WebDriverWait(self.driver, timeout).until(EC.presence_of_element_located(self.locator))
+        #self.highlight(_element)
+
+        return _element
 
     @property
     def text(self):
@@ -131,6 +134,24 @@ class Element(object):
         actions = ActionChains(self.driver)
         actions.move_to_element(element).perform()
         sleep(1)
+
+
+    def highlight(self, element, color='red', border=2, effect_time = 0.5):
+        """Highlights a Selenium Webdriver element"""
+        driver = self.driver
+
+        def apply_style(s):
+            driver.execute_script("arguments[0].setAttribute('style', arguments[1]);",
+                                  element, s)
+
+        def apply_style_delay(s, delay):
+            driver.execute_script("setTimeout(() => { arguments[0].setAttribute('style', arguments[1]);}, arguments[2])",
+                                  element, s, delay*1000)
+
+        original_style = element.get_attribute('style')
+
+        apply_style("border: {0}px solid {1};".format(border, color))
+        apply_style_delay(original_style, effect_time)
 
 
 class InputElement(Element):

@@ -28,7 +28,7 @@ def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func
 
 
 # custom step decorator (replaces '_' to ' ' in function name for readability)
-def step(title):
+def step(title, take_screenshot=False):
     if callable(title):
         return StepContext(title.__name__.replace('_', ' '), {})(title)
     else:

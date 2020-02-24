@@ -30,8 +30,9 @@ class SideMenu(Element):
         return item.find(15)
 
     def goto(self, item_name):
-        if self.items[item_name].is_displayed and self.items[item_name].is_enabled:
-            self.items[item_name].click()
+        item = self.items[item_name]
+        if item.is_displayed and item.is_enabled:
+            item.click()
 
     @property
     def search_box(self):
