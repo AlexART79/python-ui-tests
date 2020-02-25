@@ -61,7 +61,7 @@ jobs:
             cp -R tmp/allure_report artifacts/test_report
           
       - store_test_results:
-          path: tmp/test_results.xml
+          path: tmp
 
       - store_artifacts:
           path: artifacts
