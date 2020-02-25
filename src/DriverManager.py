@@ -74,7 +74,7 @@ class DriverManager:
         if self.options.headless:
             chrome_options.add_argument("--headless")
 
-        drv_path = ChromeDriverManager(path=os.path.join(dir_path, 'webdriver', self.browser)).install()
+        drv_path = os.environ.get("{}_driver_path".format(self.browser)) #ChromeDriverManager(path=os.path.join(dir_path, 'webdriver', self.browser)).install()
         drv = webdriver.Chrome(drv_path, options=chrome_options)
 
         return drv
@@ -88,7 +88,7 @@ class DriverManager:
 
         cap = DesiredCapabilities().FIREFOX
 
-        drv_path = GeckoDriverManager(path=os.path.join(dir_path, 'webdriver', self.browser)).install()
+        drv_path = os.environ.get("{}_driver_path".format(self.browser)) #GeckoDriverManager(path=os.path.join(dir_path, 'webdriver', self.browser)).install()
         drv = webdriver.Firefox(options=options, capabilities=cap,
                                 executable_path=drv_path)
 

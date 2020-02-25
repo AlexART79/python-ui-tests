@@ -1,13 +1,16 @@
 import os
+import shutil
 from time import sleep
 
+import allure
+import psutil
 import pytest
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 
-from .src.DriverManager import DriverManager, BrowserOptions
-from .src.utils.helpers import Helpers
-from .src.utils.test_logger import TestLog, Level
+from src.DriverManager import DriverManager, BrowserOptions
+from src.utils.helpers import Helpers
+from src.utils.test_logger import TestLog
 
 
 log = TestLog()
@@ -84,6 +87,15 @@ def pytest_configure(config):
             # return prepared webdriver
             yield d
 
+            if request.node.rep_call.failed:
+                log.error("Test '{}' failed!".format(request.function.__name__))
+                try:
+                    #d.execute_script("document.body.bgColor = 'white';")
+                    allure.attach(d.get_screenshot_as_png(), name='screenshot on fail',
+                                  attachment_type=allure.attachment_type.PNG)
+                except:
+                    pass  # just ignore
+
             # finalization
             d.close()
             log.debug("'driver' fixture finalized")
@@ -93,29 +105,43 @@ def pytest_configure(config):
 
 
 def download_drivers():
-    browsers = ['chrome', 'firefox']
 
-    for browser in browsers:
+    def cleanup(path):
+        kill_webdriver()
 
+        try:
+            shutil.rmtree(path)
+        except Exception as e:
+            pass
+
+    def kill_webdriver():
+        for proc in psutil.process_iter():
+            if any(procstr in proc.name() for procstr in ['chromedriver', 'geckodriver']):
+                try:
+                    proc.kill()
+                except:
+                    pass
+
+    for browser in ['chrome', 'firefox']:
         log.debug("Download webdriver binaries for '{}'".format(browser))
 
         drv_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'src', 'webdriver', browser)
-        file_path = os.path.join(drv_path, 'drivers.json')
+        cleanup(drv_path)
 
-        if os.path.exists(file_path):
-            return drv_path
-
+        path = None
         for k in range(1, 5):
             try:
                 if browser == "chrome":
-                    ChromeDriverManager(path=drv_path).install()
+                    path = ChromeDriverManager(path=drv_path).install()
                 else:
-                    GeckoDriverManager(path=drv_path).install()
+                    path = GeckoDriverManager(path=drv_path).install()
             except:
                 sleep(6)
 
-        if not os.path.exists(file_path):
+        if path is None:
             raise Exception("Unable to install driver for '{}'".format(browser))
+
+        os.environ["{}_driver_path".format(browser)] = path
 
 
 #
@@ -128,3 +154,11 @@ def base_url(request):
     log.debug("Getting base_url from config (fixture)")
     url = request.config.getini("base_url")
     return url
+
+
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+    setattr(item, "rep_" + rep.when, rep)
+    return rep
