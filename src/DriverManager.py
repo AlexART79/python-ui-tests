@@ -84,7 +84,7 @@ class DriverManager:
 
         options = FFOptions()
         options.headless = self.options.headless
-        options.binary = r'C:\Program Files\Mozilla Firefox\firefox.exe'
+        #options.binary = r'C:\Program Files\Mozilla Firefox\firefox.exe'
 
         cap = DesiredCapabilities().FIREFOX
 
