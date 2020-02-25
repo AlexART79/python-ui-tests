@@ -46,7 +46,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python -m pytest -B chrome --alluredir=tmp/allure_results --window-size 1900x1000 --junitxml=tmp/test_results.xml src/tests/pure_pytest
+            python -m pytest -B chrome --alluredir=tmp/allure_results --window-size 1900x1000 -n 2 --junitxml=tmp/test_results.xml src/tests/pure_pytest
           
       - run:
           name: generate report
