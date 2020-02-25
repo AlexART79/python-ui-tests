@@ -42,16 +42,11 @@ jobs:
             curl -LO https://github.com/allure-framework/allure2/releases/download/2.13.1/allure-commandline-2.13.1.zip
             unzip allure-commandline-2.13.1.zip
           
-      # run tests
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
       - run:
           name: run tests
           command: |
             . venv/bin/activate
-            python -m pytest -B chrome --alluredir=tmp/allure_results --window-size 1900x1000 src/tests/pure_pytest
+            python -m pytest -B chrome --alluredir=tmp/allure_results --window-size 1900x1000 --junitxml=tmp/test_results.xml src/tests/pure_pytest
           
       - run:
           name: generate report
@@ -65,7 +60,8 @@ jobs:
             mkdir artifacts
             cp -R tmp/allure_report artifacts/test_report
           
+      - store_test_results:
+          path: tmp/test_results.xml
+
       - store_artifacts:
           path: artifacts
-
-          
