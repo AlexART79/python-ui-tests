@@ -2,13 +2,22 @@ import os
 import allure
 import pytest
 
-from src.DriverManager.DriverManager import DriverManager
-from src.DriverManager.support import BrowserOptions, Browser
+from src.driver_manager.driver_manager import DriverManager
+from src.driver_manager.support import BrowserOptions, Browser
 from src.utils.helpers import Helpers
 from src.utils.test_logger import TestLog
 
 
 log = TestLog()
+
+
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+    setattr(item, "rep_" + rep.when, rep)
+    return rep
+
 
 
 #
@@ -78,17 +87,18 @@ def pytest_configure(config):
 
             yield d
 
-            if request.node.rep_call.failed:
-                log.error("Test '{}' failed!".format(request.function.__name__))
-                try:
-                    allure.attach(d.get_screenshot_as_png(), name='screenshot on fail',
-                                  attachment_type=allure.attachment_type.PNG)
-                except:
-                    pass  # just ignore
-
-            # finalization
-            d.close()
-            log.debug("'driver' fixture finalized")
+            try:
+                if request.node.rep_call.failed:
+                    log.error("Test '{}' failed!".format(request.function.__name__))
+                    try:
+                        allure.attach(d.get_screenshot_as_png(), name='screenshot on fail',
+                                      attachment_type=allure.attachment_type.PNG)
+                    except:
+                        pass  # just ignore
+            finally:
+                # finalization
+                d.close()
+                log.debug("'driver' fixture finalized")
 
     # register plugin
     config.pluginmanager.register(DriverPlugin())
@@ -104,11 +114,3 @@ def base_url(request):
     log.debug("Getting base_url from config (fixture)")
     url = request.config.getini("base_url")
     return url
-
-
-@pytest.hookimpl(hookwrapper=True, tryfirst=True)
-def pytest_runtest_makereport(item, call):
-    outcome = yield
-    rep = outcome.get_result()
-    setattr(item, "rep_" + rep.when, rep)
-    return rep

@@ -97,7 +97,6 @@ class ReactAutoComplete(Element):
                 item = list_element.find_element(By.XPATH, item_path)
                 return True, item
             except:
-                item = None
                 return False, None
 
         Helpers.wait_for(lambda : find_item()[0], 10, 1)

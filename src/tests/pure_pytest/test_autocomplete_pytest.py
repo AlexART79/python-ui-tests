@@ -1,5 +1,6 @@
 import allure
 import pytest
+from flaky import flaky
 
 from src.pages.autocomplete_page import AutoCompletePage
 from src.utils.helpers import Helpers
@@ -39,6 +40,7 @@ def autocomplete_demo_page(start_page):
 @pytest.mark.autocomplete
 class TestAutocomplete:
 
+    @flaky(max_runs=3, min_passes=1)
     @allure.story("Basic autocomplete")
     @allure.title("Test basic autocomplete")
     @pytest.mark.basic

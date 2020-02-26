@@ -1,7 +1,7 @@
 import allure
 from pytest_bdd import parsers, scenario, given, when, then
 
-from src.Elements.react_components import ReactCheckbox
+from src.elements.react_components import ReactCheckbox
 from src.pages.checkbox_page import CheckboxPage
 from .conftest import step
 
@@ -10,7 +10,7 @@ from .conftest import step
 @allure.epic("React controls")
 @allure.feature("Checkbox")
 @allure.story("Basic checkbox")
-@scenario('ReactControls/checkbox.feature', 'Basic checkbox toggle')
+@scenario('react_controls/checkbox.feature', 'Basic checkbox toggle')
 def test_checkbox_basic():
     pass
 
@@ -18,7 +18,7 @@ def test_checkbox_basic():
 @allure.epic("React controls")
 @allure.feature("Checkbox")
 @allure.story("Advanced checkbox on/off, label test")
-@scenario('ReactControls/checkbox.feature', 'Advanced checkbox on off')
+@scenario('react_controls/checkbox.feature', 'Advanced checkbox on off')
 def test_checkbox_advanced():
     pass
 

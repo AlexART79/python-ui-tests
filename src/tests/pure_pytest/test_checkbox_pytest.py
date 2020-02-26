@@ -5,6 +5,7 @@ import pytest
 from allure_commons._allure import step, attach
 
 from src.pages.checkbox_page import CheckboxPage
+from src.utils.helpers import Helpers
 from src.utils.test_logger import TestLog
 from src.tests.fixtures import start_page
 
@@ -20,7 +21,7 @@ def checkbox_demo_page(start_page):
     _page = CheckboxPage(start_page.driver)
 
     # verify page header
-    assert _page.page_header.text == "Checkbox"
+    assert Helpers.wait_for(lambda:  _page.page_header.text == "Checkbox", 50, 5)
 
     yield _page
 

@@ -12,7 +12,7 @@ from .conftest import step
 @allure.epic("React controls")
 @allure.feature("Autocomplete")
 @allure.story("Basic autocomplete select")
-@scenario('ReactControls/autocomplete.feature', 'Basic autocomplete select')
+@scenario('react_controls/autocomplete.feature', 'Basic autocomplete select')
 def test_autocomplete_basic():
     pass
 
@@ -20,7 +20,7 @@ def test_autocomplete_basic():
 @allure.epic("React controls")
 @allure.feature("Autocomplete")
 @allure.story("Advanced autocomplete select")
-@scenario('ReactControls/autocomplete.feature', 'Advanced autocomplete select')
+@scenario('react_controls/autocomplete.feature', 'Advanced autocomplete select')
 def test_autocomplete_advanced():
     pass
 

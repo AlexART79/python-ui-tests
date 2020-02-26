@@ -12,7 +12,7 @@ from ..fixtures import start_page
 @allure.epic("Demo portal")
 @allure.feature("Navigation")
 @allure.story("Navigate through demos")
-@scenario('DemoPortal/sidebar_navigation.feature', 'Navigate throug demos')
+@scenario('demo_portal/sidebar_navigation.feature', 'Navigate throug demos')
 def test_navigate():
     pass
 
