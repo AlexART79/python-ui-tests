@@ -21,7 +21,7 @@ def checkbox_demo_page(start_page):
     _page = CheckboxPage(start_page.driver)
 
     # verify page header
-    assert Helpers.wait_for(lambda:  _page.page_header.text == "Checkbox", 50, 5)
+    assert Helpers.wait_for(_page.page_header.text == "Checkbox", 50, 5)
 
     yield _page
 

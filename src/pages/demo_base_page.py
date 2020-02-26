@@ -1,4 +1,6 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
+
 from src.utils.test_logger import TestLog
 from .locators import ui_definitions
 from .base_page import BasePage
@@ -24,7 +26,7 @@ class SideMenu(Element):
 
         return dct
 
-    def get_item(self, item_name: str) -> Element:
+    def get_item(self, item_name: str) -> WebElement:
         locator = (By.XPATH, "//a[text() = '{}']".format(item_name))
         item = Element(self.driver, locator)
         return item.find(15)
