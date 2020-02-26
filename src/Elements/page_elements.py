@@ -89,8 +89,8 @@ class Element(object):
 
     def find_elements(self, locator):
         """
-        Triyng to fing a sub-elements inside the current element
-        :param locator: locator of sub-elements (relative to current element)
+        Triyng to fing a sub-Elements inside the current element
+        :param locator: locator of sub-Elements (relative to current element)
         :return: IWebElements collection or None in case element not found
         """
         e = self.find()
