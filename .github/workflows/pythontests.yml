@@ -17,10 +17,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Download allure
-      run: |
-        curl -LO https://github.com/allure-framework/allure2/releases/download/2.13.1/allure-commandline-2.13.1.zip
-        unzip allure-commandline-2.13.1.zip
     - name: Lint with flake8
       run: |
         pip install flake8
@@ -28,11 +24,4 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
-      run: |
-        pip install pytest
-        pytest -B all --alluredir=tmp/allure_results --window-size 1900x1000 -n 3 src/tests/pure_pytest
-    - name: Generate allure report
-      run: |
-        ./allure-2.13.1/bin/allure generate tmp/allure_results -o tmp/allure_report
-              
+        
