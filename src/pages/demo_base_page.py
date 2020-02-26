@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from src.utils.test_logger import TestLog
 from .locators import ui_definitions
 from .base_page import BasePage
-from ..Elements.page_elements import Element, InputElement
+from ..elements.page_elements import Element, InputElement
 
 
 log = TestLog()

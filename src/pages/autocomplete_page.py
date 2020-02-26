@@ -1,5 +1,5 @@
 from .locators import ui_definitions
-from ..Elements.react_components import ReactAutoComplete
+from ..elements.react_components import ReactAutoComplete
 from .demo_base_page import DemoBasePage
 
 

@@ -1,4 +1,4 @@
-from src.Elements.page_elements import Element
+from src.elements.page_elements import Element
 from src.pages.locators import ui_definitions
 from .demo_base_page import DemoBasePage
 

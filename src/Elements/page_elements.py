@@ -2,6 +2,7 @@ from time import sleep
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -10,12 +11,16 @@ from selenium.webdriver.common.action_chains import ActionChains
 from ..utils.helpers import Helpers
 
 
+#
+# Classic
+#
+
 class Element(object):
     def __init__(self, driver, locator):
         self.driver = driver
         self.locator = locator
 
-    def find(self, timeout=30):
+    def find(self, timeout=30) -> WebElement:
         _element = WebDriverWait(self.driver, timeout).until(EC.presence_of_element_located(self.locator))
         #self.highlight(_element)
 
@@ -173,10 +178,42 @@ class Checkbox(Element):
         super().__init__(driver, locator)
 
     @property
-    def is_checked(self):
-        checked = self.find().get_attribute("checked")
-        return checked is not None
+    def is_checked(self) -> bool:
+        checked = self.find().is_selected() # get_attribute("checked")
+        return checked # is not None
 
+    @is_checked.setter
+    def is_checked(self, value: bool):
+        if (value and not self.is_checked) or (self.is_checked and not value):
+            self.click()
+
+
+class Radio(Element):
+    def __init__(self, driver, locator):
+        super().__init__(driver, locator)
+
+    @property
+    def is_selected(self) -> bool:
+        checked = self.find().is_selected() # get_attribute("checked")
+        return checked # is not None
+
+    def select(self):
+        self.click()
+
+
+class Select(Element):
+    def __init__(self, driver, locator):
+        super().__init__(driver, locator)
+
+
+class ListBox(Element):
+    def __init__(self, driver, locator):
+        super().__init__(driver, locator)
+
+
+#
+# Advanced
+#
 
 class AngularCheckbox(Element):
     def __init__(self, driver, locator):

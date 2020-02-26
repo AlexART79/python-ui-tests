@@ -11,7 +11,7 @@ from ..fixtures import start_page
 @allure.epic("Demo portal")
 @allure.feature("Search")
 @allure.story("Search on a demos portal")
-@scenario('DemoPortal/search.feature', 'Search for certain control')
+@scenario('demo_portal/search.feature', 'Search for certain control')
 def test_search():
     pass
 
