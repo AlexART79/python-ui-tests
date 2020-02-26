@@ -2,7 +2,7 @@ import functools
 import inspect
 from datetime import datetime
 from time import sleep
-from src.utils.test_logger import Level, TestLog
+from .test_logger import Level, TestLog
 
 
 log = TestLog()
