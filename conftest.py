@@ -1,14 +1,9 @@
 import os
-import shutil
-from time import sleep
-
 import allure
-import psutil
 import pytest
-from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.firefox import GeckoDriverManager
 
-from src.DriverManager import DriverManager, BrowserOptions
+from src.DriverManager.DriverManager import DriverManager
+from src.DriverManager.support import BrowserOptions, Browser
 from src.utils.helpers import Helpers
 from src.utils.test_logger import TestLog
 
@@ -67,7 +62,7 @@ def pytest_configure(config):
     browser_opt = BrowserOptions(hdls, win_size, timeout)
 
     # download drivers
-    download_drivers()
+    DriverManager.download_drivers()
 
     # create plugin class
     class DriverPlugin:
@@ -76,21 +71,16 @@ def pytest_configure(config):
         #
         @pytest.fixture(autouse=True, params=browsers_list, scope="function")
         def driver(self, request):
-            # prepare webdriver
             browser_type = request.param
-
             log.debug("Create 'driver' fixture for {}".format(browser_type))
 
-            manager = DriverManager(browser_type, browser_opt)
-            d = manager.get_driver()
+            d = DriverManager.get_driver(Browser[browser_type], browser_opt)
 
-            # return prepared webdriver
             yield d
 
             if request.node.rep_call.failed:
                 log.error("Test '{}' failed!".format(request.function.__name__))
                 try:
-                    #d.execute_script("document.body.bgColor = 'white';")
                     allure.attach(d.get_screenshot_as_png(), name='screenshot on fail',
                                   attachment_type=allure.attachment_type.PNG)
                 except:
@@ -102,46 +92,6 @@ def pytest_configure(config):
 
     # register plugin
     config.pluginmanager.register(DriverPlugin())
-
-
-def download_drivers():
-
-    def cleanup(path):
-        kill_webdriver()
-
-        try:
-            shutil.rmtree(path)
-        except Exception as e:
-            pass
-
-    def kill_webdriver():
-        for proc in psutil.process_iter():
-            if any(procstr in proc.name() for procstr in ['chromedriver', 'geckodriver']):
-                try:
-                    proc.kill()
-                except:
-                    pass
-
-    for browser in ['chrome', 'firefox']:
-        log.debug("Download webdriver binaries for '{}'".format(browser))
-
-        drv_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'src', 'webdriver', browser)
-        cleanup(drv_path)
-
-        path = None
-        for k in range(1, 5):
-            try:
-                if browser == "chrome":
-                    path = ChromeDriverManager(path=drv_path).install()
-                else:
-                    path = GeckoDriverManager(path=drv_path).install()
-            except:
-                sleep(6)
-
-        if path is None:
-            raise Exception("Unable to install driver for '{}'".format(browser))
-
-        os.environ["{}_driver_path".format(browser)] = path
 
 
 #
