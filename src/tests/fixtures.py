@@ -16,7 +16,7 @@ def start_page(driver, base_url):
     _page.goto(base_url)
 
     # verify page header
-    assert Helpers.wait_for(lambda: _page.page_header.text == "The Most Complete UI Framework", 50, 5)
+    assert Helpers.wait_for(_page.page_header.text == "The Most Complete UI Framework", 50, 5)
 
     yield _page
 
