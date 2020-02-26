@@ -19,14 +19,22 @@ class Helpers:
     def wait_for(cond, timeout: int, delay: int) -> bool:
         """
         wait for certain condition
-        :param cond: function
+        :param cond: function or bool expression
         :param timeout: in secods
         :param delay: in seconds
         :return: boolean, true if condition was satisfied in desired amount of time; otherwise - false
         """
+
+        fn = None
+        if type(cond) == type(True):
+            fn = lambda: cond # wrap boolean condition with function
+        else:
+            fn = cond
+
         itr = int(timeout / delay)
         for i in range(1, itr):
-            if cond():
+            log.debug("*")
+            if fn():
                 return True
             else:
                 sleep(delay)

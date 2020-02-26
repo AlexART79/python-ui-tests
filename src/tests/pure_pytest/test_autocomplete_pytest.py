@@ -27,7 +27,7 @@ def autocomplete_demo_page(start_page):
     _page = AutoCompletePage(start_page.driver)
 
     # verify page header
-    assert _page.page_header.text == "AutoComplete"
+    assert Helpers.wait_for(_page.page_header.text == "AutoComplete", 50, 5)
 
     yield _page
 
