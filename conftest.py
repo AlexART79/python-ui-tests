@@ -4,7 +4,7 @@ import pytest
 
 from src.driver_manager.driver_manager import DriverManager
 from src.driver_manager.support import BrowserOptions, Browser
-from src.utils.helpers import Helpers
+from src.utils.helpers import Helpers, str2bool
 from src.utils.test_logger import TestLog
 
 
@@ -36,6 +36,11 @@ def pytest_addoption(parser):
                      action="store_true",
                      default=False,
                      help="Run in headless mode (FF, Chrome). Values: yes|no")
+    parser.addoption("--browserstack",
+                     dest="browserstack",
+                     action="store_true",
+                     default=False,
+                     help="Run with BrowserStack")
     parser.addoption("--window-size",
                      dest="window_size",
                      action="store",
@@ -46,6 +51,7 @@ def pytest_addoption(parser):
     parser.addini('tests_log_level', 'Log level', default="INFO")
     parser.addini('base_url', 'base AUT url')
     parser.addini('default_wait_timeout', 'default timeout value for implicitly wait', default=5)
+    parser.addini('run_in_browserstack', 'Run tests in browserstack', default=False)
 
 
 def pytest_configure(config):
@@ -67,8 +73,13 @@ def pytest_configure(config):
     # default timeout for implicitly wait from pytest.ini
     timeout = config.getini("default_wait_timeout")
 
-    # download drivers
-    DriverManager.download_drivers()
+    bs = str2bool(config.getini("run_in_browserstack"))
+    if config.getoption("browserstack"):
+        bs = config.getoption("browserstack")
+
+    # download drivers (if not using BrowserStack)
+    if not bs:
+        DriverManager.download_drivers()
 
     class DriverPlugin:
 
@@ -86,9 +97,9 @@ def pytest_configure(config):
             options.headless = hdls
             options.window_size = win_size
             options.timeout = timeout
+            options.browserstack = bs
 
             log.debug("Create 'driver' fixture: {}".format(options))
-
 
             # get webdriver instance
             d = DriverManager.get_driver(options)
@@ -105,7 +116,7 @@ def pytest_configure(config):
                         pass  # just ignore
             finally:
                 # finalization
-                d.close()
+                d.quit()
                 log.debug("'driver' fixture finalized")
 
     # register plugin

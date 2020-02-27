@@ -1,3 +1,4 @@
+from abc import ABCMeta, abstractmethod
 import os
 import platform
 import sys
@@ -9,13 +10,14 @@ from selenium.webdriver.firefox.options import Options as FFOptions
 from src.driver_manager.support import BrowserOptions, Platform
 
 
-class WebDriverManager():
+class WebDriverManager(metaclass=ABCMeta):
 
     """ Base class for driver manager """
 
     def __init__(self, options:BrowserOptions):
         self.browser = options.browser_type
         self.options = options
+        self.desired_cap = {}
 
     @staticmethod
     def get_platform():
@@ -28,19 +30,60 @@ class WebDriverManager():
     def __call__(self):
         return self.get()
 
+    def _get_browserstack_driver(self):
+        """ get driver for browserstack """
+
+        drv = webdriver.Remote(
+            command_executor='https://alexart1:uMueNv4mgQHTAzapSiFq@hub-cloud.browserstack.com/wd/hub',
+            desired_capabilities=self.desired_cap)
+
+        # set window size
+        if self.options.window_size is not None:
+            drv.set_window_size(self.options.window_size[0], self.options.window_size[1])
+        else:
+            drv.maximize_window()
+
+        return drv
+
+    @abstractmethod
+    def _get_local_driver(self):
+         pass
+
     def get(self):
-        """ Implement this method in subclasses! """
+
+        """ Gets webdriver for browserstack or local driver """
+
+        drv = None
+        if self.options.browserstack:
+            drv = self._get_browserstack_driver()
+        else:
+            drv = self._get_local_driver()
+
+        # set default wait timeout
+        drv.implicitly_wait(self.options.timeout)
+
+        return drv
 
 
 class ChromeManager(WebDriverManager):
     def __init__(self, options: BrowserOptions):
-        WebDriverManager.__init__(self, options)
+        super().__init__(options)
 
-    def get(self):
+        self.desired_cap = {
+            'browser': 'Chrome',
+            'browser_version': '79.0',
+            'os': 'Windows',
+            'os_version': '10',
+            'resolution': '1920x1200',
+            'name': 'Bstack-[Python] React UI test'
+        }
+
+    def _get_local_driver(self):
         chrome_options = Options()
 
         if self.options.window_size is not None:
-            chrome_options.add_argument("window-size={},{}".format(self.options.window_size[0], self.options.window_size[1]))
+            chrome_options.add_argument(
+                "window-size={},{}".format(self.options.window_size[0], self.options.window_size[1]))
         else:
             chrome_options.add_argument("--start-maximized")
 
@@ -56,9 +99,18 @@ class ChromeManager(WebDriverManager):
 
 class FirefoxManager(WebDriverManager):
     def __init__(self, options: BrowserOptions):
-        WebDriverManager.__init__(self, options)
+        super().__init__(options)
 
-    def get(self):
+        self.desired_cap = {
+            'browser': 'Firefox',
+            'browser_version': '73.0',
+            'os': 'Windows',
+            'os_version': '10',
+            'resolution': '1920x1200',
+            'name': 'Bstack-[Python] React UI test'
+        }
+
+    def _get_local_driver(self):
         options = FFOptions()
         options.headless = self.options.headless
         # options.binary = r'C:\Program Files\Mozilla Firefox\firefox.exe'
@@ -80,9 +132,18 @@ class FirefoxManager(WebDriverManager):
 
 class EdgeManager(WebDriverManager):
     def __init__(self, options: BrowserOptions):
-        WebDriverManager.__init__(self, options)
+        super().__init__(options)
 
-    def get(self):
+        self.desired_cap = {
+            'browser': 'Edge',
+            'browser_version': '80.0',
+            'os': 'Windows',
+            'os_version': '10',
+            'resolution': '1920x1200',
+            'name': 'Bstack-[Python] React UI test'
+        }
+
+    def _get_local_driver(self):
         if WebDriverManager.get_platform() != Platform.Windows:
             raise Exception("Edge is supported on Windows only")
 
@@ -97,6 +158,19 @@ class EdgeManager(WebDriverManager):
         else:
             drv.maximize_window()
 
-        drv.implicitly_wait(self.options.timeout)
 
-        return drv
+class SafariManager(WebDriverManager):
+    def __init__(self, options: BrowserOptions):
+        super().__init__(options)
+
+        self.desired_cap = {
+             'browser': 'Safari',
+             'browser_version': '13.0',
+             'os': 'OS X',
+             'os_version': 'Catalina',
+             'resolution': '1920x1080',
+             'name': 'Bstack-[Python] React UI test'
+        }
+
+    def _get_local_driver(self):
+        raise EnvironmentError("Safari browser supported in BrowserStack environment only")

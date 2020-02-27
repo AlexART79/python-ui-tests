@@ -61,11 +61,12 @@ class Platform(Enum):
 
 
 class BrowserOptions:
-    def __init__(self, browser_type=None, headless=False, window_size=None, timeout=10):
+    def __init__(self, browser_type=None, headless=False, window_size=None, timeout=10, browserstack = False):
         self.browser_type = browser_type
         self.headless = headless
         self.window_size = window_size
         self.timeout = timeout
+        self.browserstack = browserstack
 
     def __str__(self):
         wsize = "None" if self.window_size is None else "{}x{}".format(self.window_size[0], self.window_size[1])

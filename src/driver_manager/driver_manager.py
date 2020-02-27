@@ -5,7 +5,7 @@ import psutil
 from time import sleep
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
-from src.driver_manager.managers import ChromeManager, FirefoxManager, EdgeManager
+from src.driver_manager.managers import ChromeManager, FirefoxManager, EdgeManager, SafariManager
 from src.driver_manager.support import Browser, BrowserOptions
 from src.utils.test_logger import TestLog
 
@@ -89,6 +89,7 @@ class DriverManager:
 
         drivers = {Browser.chrome: ChromeManager(options),
                    Browser.firefox: FirefoxManager(options),
-                   Browser.edge: EdgeManager(options)}
+                   Browser.edge: EdgeManager(options),
+                   Browser.safari: SafariManager(options)}
 
         return drivers[key]()

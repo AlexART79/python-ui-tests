@@ -29,10 +29,10 @@ class SideMenu(Element):
     def get_item(self, item_name: str) -> WebElement:
         locator = (By.XPATH, "//a[text() = '{}']".format(item_name))
         item = Element(self.driver, locator)
-        return item.find(15)
+        return item.find(25)
 
     def goto(self, item_name):
-        item = self.items[item_name]
+        item = self.get_item(item_name)
         if item.is_displayed and item.is_enabled:
             item.click()
 

@@ -138,3 +138,11 @@ def cached(age = 5):
         return internal
 
     return wrapper
+
+def str2bool(val: str) -> bool:
+    # validate argument type
+    if not type(val) == type(''):
+        raise TypeError("Type of value thould be 'bool', but '{}' was passed".format(type(val)))
+
+    # return boolean value
+    return val.lower() in ['true', 't', 'yes', 'y', '1']
