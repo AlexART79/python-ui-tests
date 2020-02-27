@@ -1,3 +1,4 @@
+import base64
 from enum import Enum
 
 
@@ -24,6 +25,15 @@ class Browser(Enum):
 
     def __str__(self):
         return self.name
+
+    def __hash__(self):
+        encoded = base64.b64encode(self.name.encode('ascii'))
+
+        check_sum = 0
+        for code in encoded:
+            check_sum = check_sum + code
+
+        return check_sum
 
 
 class Platform(Enum):

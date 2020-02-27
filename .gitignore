@@ -14,5 +14,6 @@
 # ignore logs
 *.log
 
-src/DriverManager/src/webdriver/chrome
-src/DriverManager/src/webdriver/firefox
+# ignore files that are in downloaded dirs
+src/DriverManager/src/webdriver/chrome/
+src/DriverManager/src/webdriver/firefox/
