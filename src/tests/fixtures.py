@@ -16,7 +16,8 @@ def start_page(driver, base_url):
     _page.goto(base_url)
 
     # verify page header
-    assert Helpers.wait_for(_page.page_header.text == "The Most Complete UI Framework", 50, 5)
+    assert Helpers.wait_for(_page.header.text == "The Most Complete UI Framework", 50, 5,
+                            title="Wait for page title: 'The Most Complete UI Framework'")
 
     yield _page
 

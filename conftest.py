@@ -19,11 +19,10 @@ def pytest_runtest_makereport(item, call):
     return rep
 
 
-
-#
-# Register cmd-line options and ini file options
-#
 def pytest_addoption(parser):
+
+    """ Register cmd-line options and ini file options """
+
     log.debug("pytest_addoption")
 
     # cmd-line options
@@ -49,10 +48,10 @@ def pytest_addoption(parser):
     parser.addini('default_wait_timeout', 'default timeout value for implicitly wait', default=5)
 
 
-#
-# configure webdriver based on cmd-line arguments
-#
 def pytest_configure(config):
+
+    """ configure webdriver based on cmd-line arguments """
+
     os.environ["LOG_LEVEL"] = config.getini("tests_log_level")
     TestLog.configure()
 
@@ -68,22 +67,31 @@ def pytest_configure(config):
     # default timeout for implicitly wait from pytest.ini
     timeout = config.getini("default_wait_timeout")
 
-    browser_opt = BrowserOptions(hdls, win_size, timeout)
-
     # download drivers
     DriverManager.download_drivers()
 
-    # create plugin class
     class DriverPlugin:
-        #
-        # web driver fixture
-        #
+
+        """ Driver plugin class """
+
         @pytest.fixture(autouse=True, params=browsers_list, scope="function")
         def driver(self, request):
-            browser_type = request.param
-            log.debug("Create 'driver' fixture for {}".format(browser_type))
 
-            d = DriverManager.get_driver(Browser[browser_type], browser_opt)
+            """ web driver fixture """
+
+            # init browser options
+            options = BrowserOptions()
+
+            options.browser_type = request.param
+            options.headless = hdls
+            options.window_size = win_size
+            options.timeout = timeout
+
+            log.debug("Create 'driver' fixture: {}".format(options))
+
+
+            # get webdriver instance
+            d = DriverManager.get_driver(options)
 
             yield d
 
@@ -108,9 +116,11 @@ def pytest_configure(config):
 # common fixtures
 #
 
-# base URL from pytest.ini file
 @pytest.fixture(scope="function")
 def base_url(request):
+
+    """ base URL from pytest.ini file """
+
     log.debug("Getting base_url from config (fixture)")
     url = request.config.getini("base_url")
     return url

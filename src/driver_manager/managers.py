@@ -6,15 +6,15 @@ from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.firefox.options import Options as FFOptions
-
-from src.driver_manager.support import Browser, BrowserOptions, Platform
+from src.driver_manager.support import BrowserOptions, Platform
 
 
 class WebDriverManager():
+
     """ Base class for driver manager """
 
-    def __init__(self, type:Browser, options:BrowserOptions):
-        self.browser = type
+    def __init__(self, options:BrowserOptions):
+        self.browser = options.browser_type
         self.options = options
 
     @staticmethod
@@ -34,13 +34,13 @@ class WebDriverManager():
 
 class ChromeManager(WebDriverManager):
     def __init__(self, options: BrowserOptions):
-        WebDriverManager.__init__(self, Browser.chrome, options)
+        WebDriverManager.__init__(self, options)
 
     def get(self):
         chrome_options = Options()
 
-        if self.options.winsize is not None:
-            chrome_options.add_argument("window-size={},{}".format(self.options.winsize[0], self.options.winsize[1]))
+        if self.options.window_size is not None:
+            chrome_options.add_argument("window-size={},{}".format(self.options.window_size[0], self.options.window_size[1]))
         else:
             chrome_options.add_argument("--start-maximized")
 
@@ -56,7 +56,7 @@ class ChromeManager(WebDriverManager):
 
 class FirefoxManager(WebDriverManager):
     def __init__(self, options: BrowserOptions):
-        WebDriverManager.__init__(self, Browser.firefox, options)
+        WebDriverManager.__init__(self, options)
 
     def get(self):
         options = FFOptions()
@@ -68,8 +68,8 @@ class FirefoxManager(WebDriverManager):
         drv = webdriver.Firefox(options=options, capabilities=cap,
                                 executable_path=self.driver_path)
 
-        if self.options.winsize is not None:
-            drv.set_window_size(self.options.winsize[0], self.options.winsize[1])
+        if self.options.window_size is not None:
+            drv.set_window_size(self.options.window_size[0], self.options.window_size[1])
         else:
             drv.maximize_window()
 
@@ -80,7 +80,7 @@ class FirefoxManager(WebDriverManager):
 
 class EdgeManager(WebDriverManager):
     def __init__(self, options: BrowserOptions):
-        WebDriverManager.__init__(self, Browser.edge, options)
+        WebDriverManager.__init__(self, options)
 
     def get(self):
         if WebDriverManager.get_platform() != Platform.Windows:
@@ -92,8 +92,8 @@ class EdgeManager(WebDriverManager):
         cap = DesiredCapabilities().EDGE
 
         drv = webdriver.Edge(capabilities=cap, executable_path=self.driver_path)
-        if self.options.winsize is not None:
-            drv.set_window_size(self.options.winsize[0], self.options.winsize[1])
+        if self.options.window_size is not None:
+            drv.set_window_size(self.options.window_size[0], self.options.window_size[1])
         else:
             drv.maximize_window()
 

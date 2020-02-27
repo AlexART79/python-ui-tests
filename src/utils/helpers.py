@@ -6,7 +6,6 @@ from .test_logger import Level, TestLog
 
 
 log = TestLog()
-log.set_level(Level.DEBUG)
 
 
 class Helpers:
@@ -16,7 +15,7 @@ class Helpers:
         print("{} - {}".format(now.strftime("%d.%m.%Y %H:%M:%S"), text))
 
     @staticmethod
-    def wait_for(cond, timeout: int, delay: int) -> bool:
+    def wait_for(cond, timeout: int, delay: int, title = None) -> bool:
         """
         wait for certain condition
         :param cond: function or bool expression
@@ -24,6 +23,9 @@ class Helpers:
         :param delay: in seconds
         :return: boolean, true if condition was satisfied in desired amount of time; otherwise - false
         """
+
+        if title is not None:
+            log.debug(title)
 
         fn = None
         if type(cond) == type(True):
@@ -33,7 +35,7 @@ class Helpers:
 
         itr = int(timeout / delay)
         for i in range(1, itr):
-            log.debug("*")
+            log.trace("*")
             if fn():
                 return True
             else:

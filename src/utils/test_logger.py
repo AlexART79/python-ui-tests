@@ -5,6 +5,7 @@ from enum import Enum
 
 
 class Level(Enum):
+    TRACE = 0
     DEBUG = 1
     INFO = 2
     WARN = 3
@@ -59,6 +60,9 @@ class TestLog:
 
         now = datetime.now()
         print("{}: {} - {} - {}".format(lvl, now.strftime("%d.%m.%Y %H:%M:%S"), self.module, text))
+
+    def trace(self, text: str):
+        self.__print(text, Level.TRACE)
 
     def debug(self, text: str):
         self.__print(text, Level.DEBUG)

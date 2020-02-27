@@ -47,7 +47,7 @@ def checkbox_demo_page(start_page):
     _page = CheckboxPage(start_page.driver)
 
     # verify page header
-    assert _page.page_header.text == "Checkbox"
+    assert _page.header.text == "Checkbox"
 
     yield _page
 
@@ -63,7 +63,7 @@ def autocomplete_demo_page(start_page):
     _page = AutoCompletePage(start_page.driver)
 
     # verify page header
-    assert _page.page_header.text == "AutoComplete"
+    assert _page.header.text == "AutoComplete"
 
     yield _page
 

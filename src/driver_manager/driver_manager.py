@@ -1,11 +1,10 @@
 import os
 import shutil
-from time import sleep
-
 import psutil
+
+from time import sleep
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
-
 from src.driver_manager.managers import ChromeManager, FirefoxManager, EdgeManager
 from src.driver_manager.support import Browser, BrowserOptions
 from src.utils.test_logger import TestLog
@@ -18,6 +17,9 @@ class DriverManager:
 
     @staticmethod
     def cleanup(path):
+
+        """ Delete previously downloaded drivers """
+
         DriverManager.kill_webdriver()
 
         log.debug("Remove all previously downloaded drivers")
@@ -29,6 +31,9 @@ class DriverManager:
 
     @staticmethod
     def kill_webdriver():
+
+        """ Kill all running webdriver instances """
+
         log.debug("Kill all running webdriver instances")
         for proc in psutil.process_iter():
             if any(procstr in proc.name() for procstr in ['chromedriver', 'geckodriver']):
@@ -40,6 +45,9 @@ class DriverManager:
 
     @staticmethod
     def download_drivers():
+
+        """ Download drivers for chrome and firefox """
+
         for browser in [Browser.chrome, Browser.firefox]:
             log.debug("Download webdriver binaries for '{}'".format(str(browser)))
 
@@ -66,12 +74,18 @@ class DriverManager:
                                                                            'webdriver', 'edge', 'msedgedriver.exe')
 
     @staticmethod
-    def get_driver(btype, options: BrowserOptions):
+    def get_driver(options: BrowserOptions):
 
-        key = btype
+        """
+        WebDriver fabric method
+        :param options: webdriver options (window size, headless etc.)
+        :return: WebDriver
+        """
 
-        if type(btype) == type(str):
-            key = Browser[btype]
+        key = options.browser_type
+
+        if type(options.browser_type) == type(""):
+            key = Browser[options.browser_type]
 
         drivers = {Browser.chrome: ChromeManager(options),
                    Browser.firefox: FirefoxManager(options),

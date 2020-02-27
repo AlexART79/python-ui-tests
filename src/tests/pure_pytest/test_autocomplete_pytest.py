@@ -2,6 +2,7 @@ import allure
 import pytest
 from flaky import flaky
 
+from src.elements.react_components import ReactAutoComplete
 from src.pages.autocomplete_page import AutoCompletePage
 from src.utils.helpers import Helpers
 from src.utils.test_logger import TestLog
@@ -27,7 +28,7 @@ def autocomplete_demo_page(start_page):
     _page = AutoCompletePage(start_page.driver)
 
     # verify page header
-    assert Helpers.wait_for(_page.page_header.text == "AutoComplete", 50, 5)
+    assert Helpers.wait_for(_page.header.text == "AutoComplete", 50, 5, title="Wait for page title: 'Autocomplete'")
 
     yield _page
 
@@ -47,7 +48,7 @@ class TestAutocomplete:
     @pytest.mark.parametrize("text, value", autocomplete_data())
     def test_basic_autocomplete(self, driver, autocomplete_demo_page, text, value):
 
-        autocomplete = None
+        autocomplete: ReactAutoComplete = None
 
         with allure.step("Get basic autocomplete"):
             autocomplete = autocomplete_demo_page.basic_autocomplete
@@ -72,7 +73,7 @@ class TestAutocomplete:
     @pytest.mark.advanced
     def test_advanced_autocomplete(self, driver, autocomplete_demo_page):
 
-        autocomplete = None
+        autocomplete: ReactAutoComplete = None
         exp_value = 'Audi'
 
         with allure.step("Get advanced autocomplete"):

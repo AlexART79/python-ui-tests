@@ -41,5 +41,5 @@ def i_click_link_in_sidebar(sidebar, control_name: str):
 @then("<control_name> demo page should be displayed")
 @step
 def go_through_all_links(demos_page: DemosPage, control_name: str):
-    Helpers.wait_for(lambda: demos_page.page_header.is_displayed, 10, 2)
-    assert str.lower(demos_page.page_header.text) in str.lower(control_name)
+    Helpers.wait_for(lambda: demos_page.header.is_displayed, 10, 2)
+    assert str.lower(demos_page.header.text) in str.lower(control_name)
