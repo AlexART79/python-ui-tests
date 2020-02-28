@@ -71,7 +71,7 @@ class WebDriverManager(metaclass=ABCMeta):
         """ Gets webdriver for browserstack or local driver """
 
         drv = None
-        if self.options.browserstack:
+        if self.options.use_browserstack:
             drv = self._get_browserstack_driver()
         elif self.options.use_selenoid:
             drv = self._get_selenoid_driver()
@@ -90,7 +90,7 @@ class ChromeManager(WebDriverManager):
 
         # TODO: get capability from external storage?
 
-        if self.options.browserstack:
+        if self.options.use_browserstack:
             self.desired_cap = {
                 'browser': 'Chrome',
                 'browser_version': '79.0',
@@ -129,7 +129,7 @@ class FirefoxManager(WebDriverManager):
     def __init__(self, options: BrowserOptions):
         super().__init__(options)
 
-        if self.options.browserstack:
+        if self.options.use_browserstack:
             self.desired_cap = {
                 'browser': 'Firefox',
                 'browser_version': '73.0',
@@ -167,7 +167,7 @@ class FirefoxManager(WebDriverManager):
 class EdgeManager(WebDriverManager):
     def __init__(self, options: BrowserOptions):
         super().__init__(options)
-        if self.options.browserstack:
+        if self.options.use_browserstack:
             self.desired_cap = {
                 'browser': 'Edge',
                 'browser_version': '80.0',
@@ -201,7 +201,7 @@ class SafariManager(WebDriverManager):
     def __init__(self, options: BrowserOptions):
         super().__init__(options)
 
-        if self.options.browserstack:
+        if self.options.use_browserstack:
             self.desired_cap = {
                 'browser': 'Safari',
                 'browser_version': '13.0',

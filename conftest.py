@@ -4,6 +4,7 @@ import pytest
 
 from src.driver_manager.driver_manager import DriverManager
 from src.driver_manager.support import BrowserOptions, Browser
+from src.driver_manager.webdriver.driver_factory import BsDriverFactory, SelenoidDriverFactory, LocalDriverFactory
 from src.utils.helpers import Helpers, str2bool
 from src.utils.test_logger import TestLog
 
@@ -82,13 +83,13 @@ def pytest_configure(config):
     selenoid_hub_url = config.getini("selenoid_hub_url")
 
     # use browserstack
-    bs = str2bool(config.getini("run_in_browserstack"))
+    use_browserstack = str2bool(config.getini("run_in_browserstack"))
     if config.getoption("browserstack"):
-        bs = config.getoption("browserstack")
+        use_browserstack = config.getoption("browserstack")
 
-    # download drivers (if not using BrowserStack)
-    if not bs and not use_selenoid:
-        DriverManager.download_drivers(browsers_list)
+    # download drivers (if using Local drivers)
+    if not use_browserstack and not use_selenoid:
+        LocalDriverFactory.download_drivers(browsers_list)
 
     class DriverPlugin:
 
@@ -106,14 +107,19 @@ def pytest_configure(config):
             options.headless = hdls
             options.window_size = win_size
             options.timeout = timeout
-            options.browserstack = bs
+            options.use_browserstack = use_browserstack
             options.use_selenoid = use_selenoid
             options.selenoid_hub_url = selenoid_hub_url
 
             log.debug("Create 'driver' fixture: {}".format(options))
 
             # get webdriver instance
-            d = DriverManager.get_driver(options)
+            if use_browserstack:
+                d = BsDriverFactory.get_driver(options)
+            elif use_selenoid:
+                d = SelenoidDriverFactory.get_driver(options)
+            else:
+                d = LocalDriverFactory.get_driver(options)
 
             yield d
 

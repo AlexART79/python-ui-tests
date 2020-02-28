@@ -73,13 +73,13 @@ class BrowserOptions:
         self.headless = False
         self.window_size = None
         self.timeout = 15
-        self.browserstack = False
+        self.use_browserstack = False
         self.use_selenoid = False
         self.selenoid_hub_url = ''
 
     def __str__(self):
         wsize = "None" if self.window_size is None else "{}x{}".format(self.window_size[0], self.window_size[1])
-        env = "BrowserStack" if self.browserstack else "local driver"
+        env = "BrowserStack" if self.use_browserstack else "local driver"
 
         return "{} (Run with {}) (window_size: {}, headless: {}, wait_timeout: {})".format(
             self.browser_type,

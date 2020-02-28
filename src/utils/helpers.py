@@ -105,9 +105,7 @@ def cached(age = 5):
             if key not in cache:
                 cache_data_valid = False
 
-                d = {}
-                d["res"] = func(*args, **kwargs)
-                d["last_used"] = datetime.now()
+                d = {"res": func(*args, **kwargs), "last_used": datetime.now()}
 
                 cache[key] = d
                 log.debug("New cache entry created: {}".format(key))
