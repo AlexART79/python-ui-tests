@@ -140,9 +140,10 @@ class Element(object):
         actions.move_to_element(element).perform()
         sleep(1)
 
-
     def highlight(self, element, color='red', border=2, effect_time = 0.5):
+
         """Highlights a Selenium Webdriver element"""
+
         driver = self.driver
 
         def apply_style(s):
@@ -179,8 +180,8 @@ class Checkbox(Element):
 
     @property
     def is_checked(self) -> bool:
-        checked = self.find().is_selected() # get_attribute("checked")
-        return checked # is not None
+        checked = self.find().is_selected()
+        return checked
 
     @is_checked.setter
     def is_checked(self, value: bool):
@@ -194,8 +195,8 @@ class Radio(Element):
 
     @property
     def is_selected(self) -> bool:
-        checked = self.find().is_selected() # get_attribute("checked")
-        return checked # is not None
+        checked = self.find().is_selected()
+        return checked
 
     def select(self):
         self.click()
@@ -269,6 +270,3 @@ class SingleSelectElement(Element):
             e.clear()
             e.send_keys(val)
             e.send_keys(Keys.RETURN)
-
-
-

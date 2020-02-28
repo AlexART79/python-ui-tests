@@ -2,17 +2,13 @@ import functools
 import inspect
 from datetime import datetime
 from time import sleep
-from .test_logger import Level, TestLog
+from .test_logger import TestLog
 
 
 log = TestLog()
 
 
 class Helpers:
-    @staticmethod
-    def print(text: str) -> None:
-        now = datetime.now()
-        print("{} - {}".format(now.strftime("%d.%m.%Y %H:%M:%S"), text))
 
     @staticmethod
     def wait_for(cond, timeout: int, delay: int, title = None) -> bool:
@@ -55,7 +51,7 @@ class Helpers:
 
         browsers_list = []
         if browser_option == ["all"]:
-            return ["chrome", "firefox", "edge"]
+            return ["chrome", "firefox", "edge", "safari"]
         else:
             return browser_option
 
@@ -138,6 +134,7 @@ def cached(age = 5):
         return internal
 
     return wrapper
+
 
 def str2bool(val: str) -> bool:
     # validate argument type

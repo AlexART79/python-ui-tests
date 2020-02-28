@@ -51,7 +51,11 @@ def pytest_addoption(parser):
     parser.addini('tests_log_level', 'Log level', default="INFO")
     parser.addini('base_url', 'base AUT url')
     parser.addini('default_wait_timeout', 'default timeout value for implicitly wait', default=5)
+
     parser.addini('run_in_browserstack', 'Run tests in browserstack', default=False)
+
+    parser.addini('use_selenoid', 'Run tests in selenoid', default=False)
+    parser.addini('selenoid_hub_url', 'Selenoid hub URL', default='http://localhost:4444/wd/hub')
 
 
 def pytest_configure(config):
@@ -73,13 +77,18 @@ def pytest_configure(config):
     # default timeout for implicitly wait from pytest.ini
     timeout = config.getini("default_wait_timeout")
 
+    # use selenoid
+    use_selenoid = str2bool(config.getini("use_selenoid"))
+    selenoid_hub_url = config.getini("selenoid_hub_url")
+
+    # use browserstack
     bs = str2bool(config.getini("run_in_browserstack"))
     if config.getoption("browserstack"):
         bs = config.getoption("browserstack")
 
     # download drivers (if not using BrowserStack)
-    if not bs:
-        DriverManager.download_drivers()
+    if not bs and not use_selenoid:
+        DriverManager.download_drivers(browsers_list)
 
     class DriverPlugin:
 
@@ -98,6 +107,8 @@ def pytest_configure(config):
             options.window_size = win_size
             options.timeout = timeout
             options.browserstack = bs
+            options.use_selenoid = use_selenoid
+            options.selenoid_hub_url = selenoid_hub_url
 
             log.debug("Create 'driver' fixture: {}".format(options))
 
@@ -113,7 +124,8 @@ def pytest_configure(config):
                         allure.attach(d.get_screenshot_as_png(), name='screenshot on fail',
                                       attachment_type=allure.attachment_type.PNG)
                     except:
-                        pass  # just ignore
+                        log.warn("Unable to attch screenshot to allure report")
+                        pass
             finally:
                 # finalization
                 d.quit()

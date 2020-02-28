@@ -12,6 +12,9 @@ from src.utils.test_logger import TestLog
 
 log = TestLog()
 
+#
+# TODO: implement driver factory!!!
+#
 
 class DriverManager:
 
@@ -44,34 +47,36 @@ class DriverManager:
                     pass
 
     @staticmethod
-    def download_drivers():
+    def download_drivers(browser_list):
 
         """ Download drivers for chrome and firefox """
 
-        for browser in [Browser.chrome, Browser.firefox]:
-            log.debug("Download webdriver binaries for '{}'".format(str(browser)))
+        for browser in browser_list:
+            key = Browser[browser]
+            if key in [Browser.chrome, Browser.firefox]:
+                log.debug("Download webdriver binaries for '{}'".format(key))
 
-            drv_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'webdriver', str(browser))
-            DriverManager.cleanup(drv_path)
+                drv_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'webdriver', str(key))
+                DriverManager.cleanup(drv_path)
 
-            path = None
-            for k in range(1, 5):
-                try:
-                    if browser == Browser.chrome:
-                        path = ChromeDriverManager(path=drv_path).install()
-                    else:
-                        path = GeckoDriverManager(path=drv_path).install()
-                except:
-                    sleep(6)
+                path = None
+                for k in range(1, 5):
+                    try:
+                        if key == Browser.chrome:
+                            path = ChromeDriverManager(path=drv_path).install()
+                        else:
+                            path = GeckoDriverManager(path=drv_path).install()
+                    except:
+                        sleep(6)
 
-            if path is None:
-                raise Exception("Unable to install driver for '{}'".format(browser))
+                if path is None:
+                    raise Exception("Unable to install driver for '{}'".format(key))
 
-            os.environ["{}_driver_path".format(browser)] = path
+                os.environ["{}_driver_path".format(key)] = path
 
-        # edge browser
-        os.environ["{}_driver_path".format(Browser.edge)] = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                                                           'webdriver', 'edge', 'msedgedriver.exe')
+            # edge browser
+            os.environ["{}_driver_path".format(Browser.edge)] = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                                                               'webdriver', 'edge', 'msedgedriver.exe')
 
     @staticmethod
     def get_driver(options: BrowserOptions):
