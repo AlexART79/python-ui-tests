@@ -103,7 +103,7 @@ def pytest_configure(config):
             # init browser options
             options = BrowserOptions()
 
-            options.browser_type = request.param
+            options.browser_type = Browser[request.param]
             options.headless = hdls
             options.window_size = win_size
             options.timeout = timeout
