@@ -2,14 +2,32 @@ import os
 import allure
 import pytest
 
-from src.driver_manager.driver_manager import DriverManager
 from src.driver_manager.support import BrowserOptions, Browser
-from src.driver_manager.webdriver.driver_factory import BsDriverFactory, SelenoidDriverFactory, LocalDriverFactory
+from src.driver_manager.driver_factory import BsDriverFactory, SelenoidDriverFactory, LocalDriverFactory
 from src.utils.helpers import Helpers, str2bool
 from src.utils.test_logger import TestLog
 
 
 log = TestLog()
+
+
+class TestConfig:
+    def __init__(self, config):
+        self.tests_log_level = config.getini("tests_log_level")
+
+        self.headless = config.getoption("headless")
+        self.win_size = Helpers.get_window_size_option(config)
+        self.browsers_list = Helpers.get_browser_option(config)
+        self.timeout = config.getini("default_wait_timeout")
+        self.base_url = config.getini("base_url")
+
+        # use selenoid
+        self.use_selenoid = str2bool(config.getini("use_selenoid"))
+
+        # use browserstack
+        self.use_browserstack = False if self.use_selenoid else str2bool(config.getini("run_in_browserstack"))
+
+        self.hub_url = config.getini("selenoid_hub_url") if self.use_selenoid else config.getini("browserstack_hub_url")
 
 
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
@@ -37,11 +55,6 @@ def pytest_addoption(parser):
                      action="store_true",
                      default=False,
                      help="Run in headless mode (FF, Chrome). Values: yes|no")
-    parser.addoption("--browserstack",
-                     dest="browserstack",
-                     action="store_true",
-                     default=False,
-                     help="Run with BrowserStack")
     parser.addoption("--window-size",
                      dest="window_size",
                      action="store",
@@ -54,6 +67,10 @@ def pytest_addoption(parser):
     parser.addini('default_wait_timeout', 'default timeout value for implicitly wait', default=5)
 
     parser.addini('run_in_browserstack', 'Run tests in browserstack', default=False)
+    parser.addini('browserstack_hub_url', 'Browserstack hub URL', default='')
+
+    parser.addini('headless', 'Run tests in headless mode', default=False)
+    parser.addini('window_size', 'Browser window size', default='1920x1080')
 
     parser.addini('use_selenoid', 'Run tests in selenoid', default=False)
     parser.addini('selenoid_hub_url', 'Selenoid hub URL', default='http://localhost:4444/wd/hub')
@@ -63,39 +80,24 @@ def pytest_configure(config):
 
     """ configure webdriver based on cmd-line arguments """
 
-    os.environ["LOG_LEVEL"] = config.getini("tests_log_level")
+    # load config (ini and cmd-line)
+    test_config = TestConfig(config)
+
+    # init logging level
+    os.environ["LOG_LEVEL"] = test_config.tests_log_level
     TestLog.configure()
 
     log.debug("pytest_configure")
 
-    # headless/normal mode
-    hdls = config.getoption("headless")
-    # window size
-    win_size = Helpers.get_window_size_option(config)
-    # browsers to run tests in
-    browsers_list = Helpers.get_browser_option(config)
-
-    # default timeout for implicitly wait from pytest.ini
-    timeout = config.getini("default_wait_timeout")
-
-    # use selenoid
-    use_selenoid = str2bool(config.getini("use_selenoid"))
-    selenoid_hub_url = config.getini("selenoid_hub_url")
-
-    # use browserstack
-    use_browserstack = str2bool(config.getini("run_in_browserstack"))
-    if config.getoption("browserstack"):
-        use_browserstack = config.getoption("browserstack")
-
     # download drivers (if using Local drivers)
-    if not use_browserstack and not use_selenoid:
-        LocalDriverFactory.download_drivers(browsers_list)
+    if not (test_config.use_browserstack or test_config.use_selenoid):
+        LocalDriverFactory.download_drivers(test_config.browsers_list)
 
     class DriverPlugin:
 
         """ Driver plugin class """
 
-        @pytest.fixture(autouse=True, params=browsers_list, scope="function")
+        @pytest.fixture(autouse=True, params=test_config.browsers_list, scope="function")
         def driver(self, request):
 
             """ web driver fixture """
@@ -104,19 +106,19 @@ def pytest_configure(config):
             options = BrowserOptions()
 
             options.browser_type = Browser[request.param]
-            options.headless = hdls
-            options.window_size = win_size
-            options.timeout = timeout
-            options.use_browserstack = use_browserstack
-            options.use_selenoid = use_selenoid
-            options.selenoid_hub_url = selenoid_hub_url
+            options.headless = test_config.headless
+            options.window_size = test_config.win_size
+            options.timeout = test_config.timeout
+            options.use_browserstack = test_config.use_browserstack
+            options.use_selenoid = test_config.use_selenoid
+            options.hub_url = test_config.hub_url
 
             log.debug("Create 'driver' fixture: {}".format(options))
 
             # get webdriver instance
-            if use_browserstack:
+            if options.use_browserstack:
                 d = BsDriverFactory.get_driver(options)
-            elif use_selenoid:
+            elif options.use_selenoid:
                 d = SelenoidDriverFactory.get_driver(options)
             else:
                 d = LocalDriverFactory.get_driver(options)

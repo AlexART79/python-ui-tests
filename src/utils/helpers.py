@@ -51,7 +51,7 @@ class Helpers:
 
         browsers_list = []
         if browser_option == ["all"]:
-            return ["chrome", "firefox", "edge", "safari"]
+            return ["chrome", "firefox", "edge", "safari", "opera"]
         else:
             return browser_option
 
@@ -70,68 +70,6 @@ class Helpers:
     def size(wsize: str) -> tuple:
         sz = wsize.split('x')
         return int(sz[0]), int(sz[1])
-
-
-def cached(age = 5):
-    """
-    Caching call result for desired amount of time (in minutes)
-    :param age: age of cache
-    :return:
-    """
-    def fullname(o):
-        def get_attr(name: str) -> str:
-            info = inspect.getmembers(o)
-            for i,k in info:
-                if i == name:
-                    return k
-
-            raise Exception("Attribute {} not found".format(name))
-
-        return "{}.{}".format(get_attr("__module__"), get_attr("__qualname__"))
-
-    def wrapper(func):
-        cache = {}
-
-        # clear cache
-        def clear():
-            log.debug("Clear cache called")
-            cache.clear()
-
-        @functools.wraps(func)
-        def internal(*args, **kwargs):
-            key = "{}{}".format(fullname(func), args + tuple(sorted(kwargs.items())))
-            cache_data_valid = True
-
-            if key not in cache:
-                cache_data_valid = False
-
-                d = {"res": func(*args, **kwargs), "last_used": datetime.now()}
-
-                cache[key] = d
-                log.debug("New cache entry created: {}".format(key))
-
-            else:
-                # check if we need to refresh cached value
-                time_diff = datetime.now() - cache[key]["last_used"]
-
-                if time_diff.total_seconds() >= age * 60:
-                    cache_data_valid = False
-
-                    cache[key]["res"] = func(*args, **kwargs)
-                    cache[key]["last_used"] = datetime.now()
-
-                    log.debug("Cache entry updated: {}".format(key))
-
-            if cache_data_valid:
-                log.debug("Found valid entry in cache: {}".format(key))
-
-            return cache[key]["res"]
-
-        internal.clear = clear
-
-        return internal
-
-    return wrapper
 
 
 def str2bool(val: str) -> bool:

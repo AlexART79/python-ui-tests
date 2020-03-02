@@ -10,6 +10,7 @@ class Browser(Enum):
     firefox = 2
     edge = 3
     safari = 4
+    opera = 5
 
     def __eq__(self, other):
         return self.value == other.value
@@ -75,7 +76,7 @@ class BrowserOptions:
         self.timeout = 15
         self.use_browserstack = False
         self.use_selenoid = False
-        self.selenoid_hub_url = ''
+        self.hub_url = ''
 
     def __str__(self):
         wsize = "None" if self.window_size is None else "{}x{}".format(self.window_size[0], self.window_size[1])
