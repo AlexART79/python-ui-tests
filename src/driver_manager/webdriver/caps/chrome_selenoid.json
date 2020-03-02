@@ -1,0 +1,6 @@
+{
+    "browserName": "chrome",
+    "version": "79.0",
+    "enableVNC": "True",
+    "enableVideo": "False"
+}

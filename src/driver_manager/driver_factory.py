@@ -10,9 +10,8 @@ from webdriver_manager.firefox import GeckoDriverManager as gdm
 from webdriver_manager.opera import OperaDriverManager as odm
 
 from src.driver_manager.support import Browser, BrowserOptions
-from src.driver_manager.web_driver_manager import SelenoidChromeManager, SelenoidFirefoxManager, SelenoidOperaManager, \
-    BsChromeManager, BsFirefoxManager, BsEdgeManager, BsSafariManager, BsOperaManager, LocalChromeManager, \
-    LocalFirefoxManager, LocalEdgeManager, LocalSafariManager, LocalOperaManager
+from src.driver_manager.web_driver_manager import LocalChromeManager, LocalFirefoxManager, \
+    LocalEdgeManager, LocalSafariManager, LocalOperaManager, RemoteDriverManager
 from src.utils.test_logger import TestLog
 
 
@@ -66,7 +65,7 @@ class LocalDriverFactory(DriverFactory):
                 log.debug("Download webdriver binaries for '{}'".format(key))
 
                 drv_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'webdriver', str(key))
-                LocalDriverFactory.cleanup(drv_path)
+                #LocalDriverFactory.cleanup(drv_path)
 
                 path = None
                 for k in range(1, 5):
@@ -107,12 +106,8 @@ class LocalDriverFactory(DriverFactory):
 class SelenoidDriverFactory(DriverFactory):
     @staticmethod
     def get_driver(options: BrowserOptions):
-        if options.browser_type == Browser.chrome:
-            return SelenoidChromeManager(options).get()
-        if options.browser_type == Browser.firefox:
-            return SelenoidFirefoxManager(options).get()
-        if options.browser_type == Browser.opera:
-            return SelenoidOperaManager(options).get()
+        if options.browser_type in [Browser.chrome, Browser.firefox, Browser.opera]:
+            return RemoteDriverManager(options).get()
 
         raise Exception("Unsupported browser: {}".format(options.browser_type))
 
@@ -120,15 +115,4 @@ class SelenoidDriverFactory(DriverFactory):
 class BsDriverFactory(DriverFactory):
     @staticmethod
     def get_driver(options: BrowserOptions):
-        if options.browser_type == Browser.chrome:
-            return BsChromeManager(options).get()
-        if options.browser_type == Browser.firefox:
-            return BsFirefoxManager(options).get()
-        if options.browser_type == Browser.edge:
-            return BsEdgeManager(options).get()
-        if options.browser_type == Browser.safari:
-            return BsSafariManager(options).get()
-        if options.browser_type == Browser.opera:
-            return BsOperaManager(options).get()
-
-        raise Exception("Unsupported browser: {}".format(options.browser_type))
+        return RemoteDriverManager(options).get()

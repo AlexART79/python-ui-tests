@@ -1,0 +1,6 @@
+{
+    "browserName": "Opera",
+    "version": "66.0",
+    "enableVNC": "True",
+    "enableVideo": "False"
+}

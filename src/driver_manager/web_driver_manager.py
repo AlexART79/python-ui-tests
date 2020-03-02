@@ -1,3 +1,4 @@
+import json
 import os
 import platform
 import sys
@@ -69,9 +70,19 @@ class RemoteDriverManager(WebDriverManager):
     def __init__(self, options: BrowserOptions):
         super().__init__(options)
 
-    @abstractmethod
+    @property
+    def engine(self):
+        if self.options.use_browserstack:
+            return 'browserstack'
+        if self.options.use_selenoid:
+            return 'selenoid'
+
     def get_capabilities(self):
-        return {}
+        path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'webdriver', 'caps',
+                            '{}_{}.json'.format(self.options.browser_type, self.engine))
+        with open(path) as jf:
+            cap = json.load(jf)
+            return cap
 
     def get_hub(self):
         return self.options.hub_url
@@ -88,126 +99,6 @@ class RemoteDriverManager(WebDriverManager):
 
 
 #
-# SELENOID remote web driver
-#
-class SelenoidChromeManager(RemoteDriverManager):
-    def __init__(self, options: BrowserOptions):
-        super().__init__(options)
-
-    def get_capabilities(self):
-        return {
-                    "browserName": "chrome",
-                    "version": "79.0",
-                    "enableVNC": True,
-                    "enableVideo": False
-               }
-
-
-class SelenoidFirefoxManager(RemoteDriverManager):
-    def __init__(self, options: BrowserOptions):
-        super().__init__(options)
-
-    def get_capabilities(self):
-        return {
-                    "browserName": "firefox",
-                    "version": "73.0",
-                    "enableVNC": True,
-                    "enableVideo": False
-               }
-
-
-class SelenoidOperaManager(RemoteDriverManager):
-    def __init__(self, options: BrowserOptions):
-        super().__init__(options)
-
-    def get_capabilities(self):
-        return {
-                    "browserName": "Opera",
-                    "version": "66.0",
-                    "enableVNC": True,
-                    "enableVideo": False
-               }
-
-
-#
-# BROWSERSTACK remote web driver
-#
-class BsChromeManager(RemoteDriverManager):
-    def __init__(self, options: BrowserOptions):
-        super().__init__(options)
-
-    def get_capabilities(self):
-        return {
-                    'browser': 'Chrome',
-                    'browser_version': '79.0',
-                    'os': 'Windows',
-                    'os_version': '10',
-                    'resolution': '1920x1200',
-                    'name': 'Bstack-[Python] React UI test'
-               }
-
-
-class BsFirefoxManager(RemoteDriverManager):
-    def __init__(self, options: BrowserOptions):
-        super().__init__(options)
-
-    def get_capabilities(self):
-        return {
-                    'browser': 'Firefox',
-                    'browser_version': '73.0',
-                    'os': 'Windows',
-                    'os_version': '10',
-                    'resolution': '1920x1200',
-                    'name': 'Bstack-[Python] React UI test'
-               }
-
-
-class BsEdgeManager(RemoteDriverManager):
-    def __init__(self, options: BrowserOptions):
-        super().__init__(options)
-
-    def get_capabilities(self):
-        return {
-                    'browser': 'Edge',
-                    'browser_version': '80.0',
-                    'os': 'Windows',
-                    'os_version': '10',
-                    'resolution': '1920x1200',
-                    'name': 'Bstack-[Python] React UI test'
-               }
-
-
-class BsSafariManager(RemoteDriverManager):
-    def __init__(self, options: BrowserOptions):
-        super().__init__(options)
-
-    def get_capabilities(self):
-        return {
-                    'browser': 'Safari',
-                    'browser_version': '13.0',
-                    'os': 'OS X',
-                    'os_version': 'Catalina',
-                    'resolution': '1920x1080',
-                    'name': 'Bstack-[Python] React UI test'
-               }
-
-
-class BsOperaManager(RemoteDriverManager):
-    def __init__(self, options: BrowserOptions):
-        super().__init__(options)
-
-    def get_capabilities(self):
-        return {
-                    'browser': 'Opera',
-                    'browser_version': '66.0',
-                    'os': 'Windows',
-                    'os_version': '10',
-                    'resolution': '1920x1200',
-                    'name': 'Bstack-[Python] React UI test'
-               }
-
-
-#
 # LOCAL web driver
 #
 class LocalChromeManager(LocalDriverManager):
@@ -216,20 +107,13 @@ class LocalChromeManager(LocalDriverManager):
 
     def get(self):
         chrome_options = ChromeOptions()
-
-        if self.options.window_size is not None:
-            chrome_options.add_argument(
-                "window-size={},{}".format(self.options.window_size[0], self.options.window_size[1]))
-        else:
-            chrome_options.add_argument("--start-maximized")
-
-        if self.options.headless:
-            chrome_options.add_argument("--headless")
+        chrome_options.headless = self.options.headless
 
         sys.path.insert(0, self.driver_path)
         drv = webdriver.Chrome(self.driver_path, options=chrome_options)
 
         self.set_window_position(drv)
+        self.set_window_size(drv)
 
         return drv
 

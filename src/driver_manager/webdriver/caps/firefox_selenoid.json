@@ -1,0 +1,6 @@
+{
+    "browserName": "firefox",
+    "version": "73.0",
+    "enableVNC": "True",
+    "enableVideo": "False"
+}

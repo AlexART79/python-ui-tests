@@ -13,7 +13,8 @@ log = TestLog()
 
 class TestConfig:
     def __init__(self, config):
-        self.tests_log_level = config.getini("tests_log_level")
+        # set log level
+        os.environ["LOG_LEVEL"] = self.tests_log_level = config.getini("tests_log_level")
 
         self.headless = config.getoption("headless")
         self.win_size = Helpers.get_window_size_option(config)
@@ -23,11 +24,10 @@ class TestConfig:
 
         # use selenoid
         self.use_selenoid = str2bool(config.getini("use_selenoid"))
-
         # use browserstack
-        self.use_browserstack = False if self.use_selenoid else str2bool(config.getini("run_in_browserstack"))
-
-        self.hub_url = config.getini("selenoid_hub_url") if self.use_selenoid else config.getini("browserstack_hub_url")
+        self.use_browserstack = False if self.use_selenoid else str2bool(config.getini("use_browserstack"))
+        # remote hub url
+        self.hub_url = config.getini("hub_url")
 
 
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
@@ -64,16 +64,13 @@ def pytest_addoption(parser):
     # ini options
     parser.addini('tests_log_level', 'Log level', default="INFO")
     parser.addini('base_url', 'base AUT url')
-    parser.addini('default_wait_timeout', 'default timeout value for implicitly wait', default=5)
-
-    parser.addini('run_in_browserstack', 'Run tests in browserstack', default=False)
-    parser.addini('browserstack_hub_url', 'Browserstack hub URL', default='')
-
+    parser.addini('default_wait_timeout', 'default timeout value for implicitly wait', default=15)
     parser.addini('headless', 'Run tests in headless mode', default=False)
     parser.addini('window_size', 'Browser window size', default='1920x1080')
 
+    parser.addini('use_browserstack', 'Run tests in browserstack', default=False)
     parser.addini('use_selenoid', 'Run tests in selenoid', default=False)
-    parser.addini('selenoid_hub_url', 'Selenoid hub URL', default='http://localhost:4444/wd/hub')
+    parser.addini('hub_url', 'Remote hub URL', default='http://localhost:4444/wd/hub')
 
 
 def pytest_configure(config):
@@ -82,9 +79,6 @@ def pytest_configure(config):
 
     # load config (ini and cmd-line)
     test_config = TestConfig(config)
-
-    # init logging level
-    os.environ["LOG_LEVEL"] = test_config.tests_log_level
     TestLog.configure()
 
     log.debug("pytest_configure")
