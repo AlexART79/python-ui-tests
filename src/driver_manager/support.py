@@ -80,7 +80,11 @@ class BrowserOptions:
 
     def __str__(self):
         wsize = "None" if self.window_size is None else "{}x{}".format(self.window_size[0], self.window_size[1])
-        env = "BrowserStack" if self.use_browserstack else "local driver"
+        env = "local driver"
+        if self.use_browserstack:
+            env = "BrowserStack"
+        elif self.use_selenoid:
+            env = "Selenoid"
 
         return "{} (Run with {}) (window_size: {}, headless: {}, wait_timeout: {})".format(
             self.browser_type,

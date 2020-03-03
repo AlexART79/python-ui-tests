@@ -49,7 +49,6 @@ class Helpers:
         if browser_option is None:
             browser_option = ["chrome"]
 
-        browsers_list = []
         if browser_option == ["all"]:
             return ["chrome", "firefox", "edge", "safari", "opera"]
         else:

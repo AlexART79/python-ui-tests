@@ -12,6 +12,7 @@ from selenium.webdriver.opera.options import Options as OperaOptions
 from selenium.webdriver.firefox.options import Options as FFOptions
 
 from src.driver_manager.support import BrowserOptions, Platform
+from src.utils.helpers import str2bool
 
 
 class WebDriverManager(metaclass=ABCMeta):
@@ -81,7 +82,14 @@ class RemoteDriverManager(WebDriverManager):
         path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'webdriver', 'caps',
                             '{}_{}.json'.format(self.options.browser_type, self.engine))
         with open(path) as jf:
-            cap = json.load(jf)
+            cap: dict = json.load(jf)
+
+            # fix boolean values
+            for k in cap.keys():
+                v = cap[k]
+                if v in ["True", "true", "False", "false"]:
+                    cap[k] = str2bool(v)
+
             return cap
 
     def get_hub(self):
