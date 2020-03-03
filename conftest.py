@@ -68,8 +68,8 @@ def pytest_addoption(parser):
     parser.addini('headless', 'Run tests in headless mode', default=False)
     parser.addini('window_size', 'Browser window size', default='1920x1080')
 
-    parser.addini('use_browserstack', 'Run tests in browserstack', default=False)
-    parser.addini('use_selenoid', 'Run tests in selenoid', default=False)
+    parser.addini('use_browserstack', 'Run tests in browserstack', default="False")
+    parser.addini('use_selenoid', 'Run tests in selenoid', default="False")
     parser.addini('hub_url', 'Remote hub URL', default='http://localhost:4444/wd/hub')
 
 
