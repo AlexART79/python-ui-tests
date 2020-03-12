@@ -1,5 +1,5 @@
 from .locators import ui_definitions
-from src.elements.react_components import ReactCheckbox
+from src.elements.prime_react.react_checkbox import ReactCheckbox
 from .demo_base_page import DemoBasePage
 
 

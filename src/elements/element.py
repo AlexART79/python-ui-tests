@@ -1,28 +1,24 @@
 from time import sleep
 
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.common.action_chains import ActionChains
 
-from ..utils.helpers import Helpers
+from src.utils.helpers import Helpers
 
-
-#
-# Classic
-#
 
 class Element(object):
+    """
+    base element for all UI elements
+    """
     def __init__(self, driver, locator):
         self.driver = driver
         self.locator = locator
 
     def find(self, timeout=30) -> WebElement:
         _element = WebDriverWait(self.driver, timeout).until(EC.presence_of_element_located(self.locator))
-        #self.highlight(_element)
 
         return _element
 
@@ -158,115 +154,3 @@ class Element(object):
 
         apply_style("border: {0}px solid {1};".format(border, color))
         apply_style_delay(original_style, effect_time)
-
-
-class InputElement(Element):
-    def __init__(self, driver, locator):
-        super().__init__(driver, locator)
-
-    @property
-    def value(self):
-        return self.find().get_attribute("value")
-
-    @value.setter
-    def value(self, val):
-        self.clear()
-        self.send_keys(val)
-
-
-class Checkbox(Element):
-    def __init__(self, driver, locator):
-        super().__init__(driver, locator)
-
-    @property
-    def is_checked(self) -> bool:
-        checked = self.find().is_selected()
-        return checked
-
-    @is_checked.setter
-    def is_checked(self, value: bool):
-        if (value and not self.is_checked) or (self.is_checked and not value):
-            self.click()
-
-
-class Radio(Element):
-    def __init__(self, driver, locator):
-        super().__init__(driver, locator)
-
-    @property
-    def is_selected(self) -> bool:
-        checked = self.find().is_selected()
-        return checked
-
-    def select(self):
-        self.click()
-
-
-class Select(Element):
-    def __init__(self, driver, locator):
-        super().__init__(driver, locator)
-
-
-class ListBox(Element):
-    def __init__(self, driver, locator):
-        super().__init__(driver, locator)
-
-
-#
-# Advanced
-#
-
-class AngularCheckbox(Element):
-    def __init__(self, driver, locator):
-        super().__init__(driver, locator)
-
-    @property
-    def is_checked(self):
-        cb = self.find_element((By.TAG_NAME, "input"))
-        checked = cb.get_attribute("checked")
-        return checked is not None
-
-
-class TinyMceEditor(Element):
-    def __init__(self, driver, locator):
-        super().__init__(driver, locator)
-
-    @property
-    def value(self):
-        self.driver.switch_to.frame(self.find())
-        content = Element(self.driver, (By.ID, "tinymce"))
-
-        self.driver.switch_to.default_content()
-
-        return content.text
-
-    @value.setter
-    def value(self, value):
-        self.driver.switch_to.frame(self.find())
-        content = Element(self.driver, (By.ID, "tinymce"))
-
-        content.send_keys(value)
-
-        self.driver.switch_to.default_content()
-
-
-class SingleSelectElement(Element):
-    def __init__(self, driver, locator):
-        super().__init__(driver, locator)
-
-        by, loc_str = locator
-        input_locator = (by, loc_str+"/input")
-        self.input_element = InputElement(self.driver, input_locator)
-
-    @property
-    def value(self):
-        return "NOT_IMPLEMENTED_YET"
-
-    @value.setter
-    def value(self, val):
-        e = self.input_element.wait_to_be_enabled()
-        if e:
-            e.click()
-            e.clear()
-            e.send_keys(val)
-            e.send_keys(Keys.RETURN)

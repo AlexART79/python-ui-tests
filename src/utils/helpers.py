@@ -41,10 +41,7 @@ class Helpers:
 
     # get -B (--browser) cmd-line option and return it as browsers list
     @staticmethod
-    def get_browser_option(conf) -> list:
-        # browsers to run tests in
-        browser_option = conf.getoption("browser")
-
+    def get_browsers(browser_option) -> list:
         # if there is no -B option provided, use chrome
         if browser_option is None:
             browser_option = ["chrome"]

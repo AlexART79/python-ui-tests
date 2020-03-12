@@ -1,7 +1,7 @@
 import allure
 from pytest_bdd import parsers, scenario, given, when, then
 
-from src.elements.react_components import ReactCheckbox
+from src.elements.prime_react.react_checkbox import ReactCheckbox
 from src.pages.checkbox_page import CheckboxPage
 from .conftest import step
 

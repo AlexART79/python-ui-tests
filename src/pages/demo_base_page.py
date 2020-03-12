@@ -4,8 +4,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from src.utils.test_logger import TestLog
 from .locators import ui_definitions
 from .base_page import BasePage
-from src.elements.page_elements import Element, InputElement
-
+from src.elements.classic_elements.input_element import InputElement
+from src.elements.element import Element
 
 log = TestLog()
 

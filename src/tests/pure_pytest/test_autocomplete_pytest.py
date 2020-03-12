@@ -2,12 +2,12 @@ import allure
 import pytest
 from flaky import flaky
 
-from src.elements.react_components import ReactAutoComplete
+from src.elements.prime_react.react_autocomplete import ReactAutoComplete
 from src.pages.autocomplete_page import AutoCompletePage
 from src.utils.helpers import Helpers
 from src.utils.test_logger import TestLog
-from src.tests.fixtures import start_page
 
+from src.tests.fixtures import start_page
 
 log = TestLog()
 

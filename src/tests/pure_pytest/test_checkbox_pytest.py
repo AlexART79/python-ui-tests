@@ -1,12 +1,11 @@
 import allure
 import pytest
 
-from allure_commons._allure import step, attach
-
-from src.elements.react_components import ReactCheckbox
+from src.elements.prime_react.react_checkbox import ReactCheckbox
 from src.pages.checkbox_page import CheckboxPage
 from src.utils.helpers import Helpers
 from src.utils.test_logger import TestLog
+
 from src.tests.fixtures import start_page
 
 
@@ -41,19 +40,19 @@ class TestCheckbox:
 
         checkbox: ReactCheckbox = None
 
-        with step("Get basic checkbox"):
+        with allure.step("Get basic checkbox"):
             checkbox = checkbox_demo_page.first_checkbox
 
-        with step("Check initial checkbox state"):
-            attach(driver.get_screenshot_as_png(), name='screenshot',
+        with allure.step("Check initial checkbox state"):
+            allure.attach(driver.get_screenshot_as_png(), name='screenshot',
                    attachment_type=allure.attachment_type.PNG)
             assert not checkbox.checked
 
-        with step("Toggle checkbox"):
+        with allure.step("Toggle checkbox"):
             checkbox.click()
 
-        with step("Checkbox should be checked"):
-            attach(driver.get_screenshot_as_png(), name='screenshot',
+        with allure.step("Checkbox should be checked"):
+            allure.attach(driver.get_screenshot_as_png(), name='screenshot',
                    attachment_type=allure.attachment_type.PNG)
             assert checkbox.checked
 
@@ -64,31 +63,31 @@ class TestCheckbox:
 
         checkbox: ReactCheckbox = None
 
-        with step("Get advanced checkbox"):
+        with allure.step("Get advanced checkbox"):
             checkbox = checkbox_demo_page.second_checkbox
 
-        with step("Check initial checkbox state"):
-            attach(driver.get_screenshot_as_png(), name='screenshot',
+        with allure.step("Check initial checkbox state"):
+            allure.attach(driver.get_screenshot_as_png(), name='screenshot',
                    attachment_type=allure.attachment_type.PNG)
             assert not checkbox.checked
 
-        with step("Checkbox label should be 'New York'"):
-            attach(driver.get_screenshot_as_png(), name='screenshot',
+        with allure.step("Checkbox label should be 'New York'"):
+            allure.attach(driver.get_screenshot_as_png(), name='screenshot',
                    attachment_type=allure.attachment_type.PNG)
             assert checkbox.label == 'New York'
 
-        with step("Set checkbox state to 'ON'"):
+        with allure.step("Set checkbox state to 'ON'"):
             checkbox.checked = True
 
-        with step("Checkbox should be checked"):
-            attach(driver.get_screenshot_as_png(), name='screenshot',
+        with allure.step("Checkbox should be checked"):
+            allure.attach(driver.get_screenshot_as_png(), name='screenshot',
                    attachment_type=allure.attachment_type.PNG)
             assert checkbox.checked
 
-        with step("Set checkbox state to 'OFF'"):
+        with allure.step("Set checkbox state to 'OFF'"):
             checkbox.checked = False
 
-        with step("Checkbox should be NOT checked"):
-            attach(driver.get_screenshot_as_png(), name='screenshot',
+        with allure.step("Checkbox should be NOT checked"):
+            allure.attach(driver.get_screenshot_as_png(), name='screenshot',
                    attachment_type=allure.attachment_type.PNG)
             assert not checkbox.checked
