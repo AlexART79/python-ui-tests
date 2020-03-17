@@ -1,6 +1,5 @@
 import allure
 import pytest
-from flaky import flaky
 
 from src.elements.prime_react.react_autocomplete import ReactAutoComplete
 from src.pages.autocomplete_page import AutoCompletePage
@@ -40,8 +39,6 @@ def autocomplete_demo_page(start_page):
 @allure.feature("Autocomplete")
 @pytest.mark.autocomplete
 class TestAutocomplete:
-
-    @flaky(max_runs=3, min_passes=1)
     @allure.story("Basic autocomplete")
     @allure.title("Test basic autocomplete")
     @pytest.mark.basic

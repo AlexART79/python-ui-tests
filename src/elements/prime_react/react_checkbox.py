@@ -7,9 +7,6 @@ class ReactCheckbox(Element):
     def __init__(self, driver, locator):
         super().__init__(driver, locator)
 
-    def click(self) -> None:
-        self.find().click()
-
     @property
     def checked(self) -> bool:
         cb_locator = (By.XPATH, '..//input')

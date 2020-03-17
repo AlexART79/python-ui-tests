@@ -1,3 +1,6 @@
+from time import sleep
+
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -26,10 +29,10 @@ class SideMenu(Element):
 
         return dct
 
-    def get_item(self, item_name: str) -> WebElement:
-        locator = (By.XPATH, "//a[text() = '{}']".format(item_name))
+    def get_item(self, item_name: str) -> Element:
+        locator = (By.XPATH, "//a[starts-with(.,'{}')]".format(item_name))
         item = Element(self.driver, locator)
-        return item.find(25)
+        return item
 
     def goto(self, item_name):
         item = self.get_item(item_name)

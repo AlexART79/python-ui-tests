@@ -9,9 +9,9 @@ from webdriver_manager.chrome import ChromeDriverManager as cdm
 from webdriver_manager.firefox import GeckoDriverManager as gdm
 from webdriver_manager.opera import OperaDriverManager as odm
 
-from src.driver_manager.support import Browser, BrowserOptions
+from src.driver_manager.support import Browser, BrowserOptions, Platform
 from src.driver_manager.web_driver_manager import LocalChromeManager, LocalFirefoxManager, \
-    LocalEdgeManager, LocalSafariManager, LocalOperaManager, RemoteDriverManager
+    LocalEdgeManager, LocalSafariManager, LocalOperaManager, RemoteDriverManager, WebDriverManager
 from src.utils.test_logger import TestLog
 
 
@@ -77,8 +77,13 @@ class LocalDriverFactory(DriverFactory):
                         elif key == Browser.opera:
                             path = odm(path=drv_path, version='v.79.0.3945.79').install()
                         elif key == Browser.edge:
-                            path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                                'webdriver', 'edge', 'msedgedriver.exe')
+
+                            if WebDriverManager.get_platform() == Platform.Windows:
+                                path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                                    'webdriver', 'edge', 'msedgedriver.exe')
+                            else:
+                                path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                                    'webdriver', 'edge', 'msedgedriver')
                     except:
                         sleep(6)
 

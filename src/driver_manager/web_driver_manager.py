@@ -154,9 +154,16 @@ class LocalEdgeManager(LocalDriverManager):
             raise Exception("Edge is supported on Windows or OS-X only")
 
         sys.path.insert(0, os.path.dirname(self.driver_path))
-        sys.path.insert(0, r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe")
+        if WebDriverManager.get_platform() == Platform.Windows:
+            sys.path.insert(0, r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe")
+        # else:
+        #     sys.path.insert(0, r"")
 
-        cap = DesiredCapabilities().EDGE
+        cap = {
+            "browserName": "MicrosoftEdge",
+            "version": "",
+            "platform": "MAC"
+        }
 
         drv = webdriver.Edge(capabilities=cap, executable_path=self.driver_path)
 
@@ -174,16 +181,21 @@ class LocalSafariManager(LocalDriverManager):
         if not WebDriverManager.get_platform() == Platform.Darwin:
             raise Exception("Safari is supported on OS-X only")
 
-        raise NotImplementedError("Implement this!")
+        drv = webdriver.Safari()
+        self.set_window_size(drv)
+        self.set_window_position(drv)
+
+        return drv
 
 
 class LocalOperaManager(LocalDriverManager):
     def __init__(self, options: BrowserOptions):
         super().__init__(options)
 
-        self.binary_location = r"C:\Users\aartemov\AppData\Local\Programs\Opera\66.0.3515.115\opera.exe" \
-            if WebDriverManager.get_platform() == Platform.Windows \
-            else "path/to/opera/"
+        if WebDriverManager.get_platform() == Platform.Windows:
+            self.binary_location = r"C:\Users\aartemov\AppData\Local\Programs\Opera\66.0.3515.115\opera.exe"
+        else:
+            self.binary_location = ''
 
     def get(self):
         cap = DesiredCapabilities.OPERA.copy()

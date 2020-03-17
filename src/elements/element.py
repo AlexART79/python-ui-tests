@@ -23,6 +23,10 @@ class Element(object):
         return _element
 
     @property
+    def element(self):
+        return self.find()
+
+    @property
     def text(self):
         return self.find().text
 
@@ -51,7 +55,12 @@ class Element(object):
             return False
 
     def click(self):
-        self.find().click()
+        # workaround for SAFARI issue with click
+        if self.driver.name.lower() == 'safari':
+            self.driver.execute_script("arguments[0].click();", self.element)
+        else:
+            self.find().click()
+
         sleep(1)
 
     def clear(self):
@@ -136,11 +145,12 @@ class Element(object):
         actions.move_to_element(element).perform()
         sleep(1)
 
-    def highlight(self, element, color='red', border=2, effect_time = 0.5):
+    def highlight(self, color='red', border=2, effect_time = 0.5):
 
         """Highlights a Selenium Webdriver element"""
 
         driver = self.driver
+        element = self.find()
 
         def apply_style(s):
             driver.execute_script("arguments[0].setAttribute('style', arguments[1]);",

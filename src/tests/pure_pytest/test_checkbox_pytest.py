@@ -8,7 +8,6 @@ from src.utils.test_logger import TestLog
 
 from src.tests.fixtures import start_page
 
-
 log = TestLog()
 
 
@@ -37,7 +36,6 @@ class TestCheckbox:
     @allure.title("Test basic checkbox")
     @pytest.mark.basic
     def test_basic_checkbox(self, driver, checkbox_demo_page):
-
         checkbox: ReactCheckbox = None
 
         with allure.step("Get basic checkbox"):
@@ -45,7 +43,7 @@ class TestCheckbox:
 
         with allure.step("Check initial checkbox state"):
             allure.attach(driver.get_screenshot_as_png(), name='screenshot',
-                   attachment_type=allure.attachment_type.PNG)
+                          attachment_type=allure.attachment_type.PNG)
             assert not checkbox.checked
 
         with allure.step("Toggle checkbox"):
@@ -53,14 +51,13 @@ class TestCheckbox:
 
         with allure.step("Checkbox should be checked"):
             allure.attach(driver.get_screenshot_as_png(), name='screenshot',
-                   attachment_type=allure.attachment_type.PNG)
+                          attachment_type=allure.attachment_type.PNG)
             assert checkbox.checked
 
     @allure.story("Advanced checkbox")
     @allure.title("Test advanced checkbox")
     @pytest.mark.advanced
     def test_advanced_checkbox(self, driver, checkbox_demo_page):
-
         checkbox: ReactCheckbox = None
 
         with allure.step("Get advanced checkbox"):
@@ -68,12 +65,12 @@ class TestCheckbox:
 
         with allure.step("Check initial checkbox state"):
             allure.attach(driver.get_screenshot_as_png(), name='screenshot',
-                   attachment_type=allure.attachment_type.PNG)
+                          attachment_type=allure.attachment_type.PNG)
             assert not checkbox.checked
 
         with allure.step("Checkbox label should be 'New York'"):
             allure.attach(driver.get_screenshot_as_png(), name='screenshot',
-                   attachment_type=allure.attachment_type.PNG)
+                          attachment_type=allure.attachment_type.PNG)
             assert checkbox.label == 'New York'
 
         with allure.step("Set checkbox state to 'ON'"):
@@ -81,7 +78,7 @@ class TestCheckbox:
 
         with allure.step("Checkbox should be checked"):
             allure.attach(driver.get_screenshot_as_png(), name='screenshot',
-                   attachment_type=allure.attachment_type.PNG)
+                          attachment_type=allure.attachment_type.PNG)
             assert checkbox.checked
 
         with allure.step("Set checkbox state to 'OFF'"):
@@ -89,5 +86,5 @@ class TestCheckbox:
 
         with allure.step("Checkbox should be NOT checked"):
             allure.attach(driver.get_screenshot_as_png(), name='screenshot',
-                   attachment_type=allure.attachment_type.PNG)
+                          attachment_type=allure.attachment_type.PNG)
             assert not checkbox.checked

@@ -1,3 +1,5 @@
+from time import sleep
+
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
@@ -43,10 +45,14 @@ class ReactAutoComplete(Element):
         return self._list.is_displayed()
 
     def expand(self) -> None:
-        action = ActionChains(self.driver).move_to_element(self._dropdown).click().pause(1)
-
         while not self.is_expanded:
-            action.perform()
+            # workaround for SAFARI issue with click
+            if self.driver.name.lower() == 'safari':
+                self.driver.execute_script("arguments[0].click();", self._dropdown)
+            else:
+                self._dropdown.click()
+
+            sleep(1)
 
     def select_value(self, val: str):
         def find_item():
@@ -64,4 +70,8 @@ class ReactAutoComplete(Element):
         res, item = find_item()
 
         if res:
-            item.click()
+            # workaround for SAFARI issue with click
+            if self.driver.name.lower() == 'safari':
+                self.driver.execute_script("arguments[0].click();", item)
+            else:
+                item.click()

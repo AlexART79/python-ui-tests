@@ -1,59 +1,12 @@
-import os
 import allure
 import pytest
 
 from src.driver_manager.support import BrowserOptions, Browser
 from src.driver_manager.driver_factory import BsDriverFactory, SelenoidDriverFactory, LocalDriverFactory
-from src.utils.helpers import Helpers, str2bool
 from src.utils.test_logger import TestLog
-
+from test_config import TestConfig
 
 log = TestLog()
-
-
-class TestConfig:
-
-    def set_defaults(self):
-        self.headless = False
-        self.win_size = Helpers.size("1600x900")
-        self.browsers_list = ['chrome']
-        self.timeout = 15
-        self.base_url = ''
-        self.use_selenoid = False
-        self.use_browserstack = False
-        self.hub_url = ''
-
-    def process_ini(self, config):
-        self.headless = str2bool(config.getini("headless"))
-        self.win_size = Helpers.size(config.getini('window_size'))
-        # browser option from ini is 'str' (comma separated), so we need to split it
-        self.browsers_list = Helpers.get_browsers(config.getini("browser").split(','))
-        self.timeout = config.getini("default_wait_timeout")
-        self.base_url = config.getini("base_url")
-
-        # use selenoid
-        self.use_selenoid = str2bool(config.getini("use_selenoid"))
-        # use browserstack (have less priority than selenoid, so if used both - selenoid will be selected)
-        self.use_browserstack = False if self.use_selenoid else str2bool(config.getini("use_browserstack"))
-        self.hub_url = config.getini("hub_url")
-
-    def process_commandline(self, config):
-        if config.getoption('headless'):
-            self.headless = config.getoption("headless")
-
-        if not (config.getoption('window_size') is None or config.getoption('window_size') == ''):
-            self.win_size = Helpers.size(config.getoption('window_size'))
-
-        if not (config.getoption('browser') is None or config.getoption('browser') == []):
-            self.browsers_list = Helpers.get_browsers(config.getoption('browser'))
-
-    def __init__(self, config):
-        # set log level
-        os.environ["LOG_LEVEL"] = self.tests_log_level = config.getini("tests_log_level")
-
-        self.set_defaults()
-        self.process_ini(config)
-        self.process_commandline(config)
 
 
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
@@ -109,6 +62,7 @@ def pytest_configure(config):
     TestLog.configure()
 
     log.debug("pytest_configure")
+    log.debug(test_config)
 
     # download drivers (if using Local drivers)
     if not (test_config.use_browserstack or test_config.use_selenoid):
