@@ -6,6 +6,7 @@ from src.driver_manager.driver_factory import BsDriverFactory, SelenoidDriverFac
 from src.utils.test_logger import TestLog
 from test_config import TestConfig
 
+
 log = TestLog()
 
 

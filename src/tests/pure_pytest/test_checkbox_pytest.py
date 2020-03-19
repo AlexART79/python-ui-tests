@@ -5,8 +5,8 @@ from src.elements.prime_react.react_checkbox import ReactCheckbox
 from src.pages.checkbox_page import CheckboxPage
 from src.utils.helpers import Helpers
 from src.utils.test_logger import TestLog
-
 from src.tests.fixtures import start_page
+
 
 log = TestLog()
 
